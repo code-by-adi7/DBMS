@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>SQL Lab Notebook — Interactive DBMS Lab Guide & AI Tutor</title>
-    <meta name="description" content="A modern, responsive interactive learning notebook for all 14 DBMS SQL & PL/SQL lab programs. Complete with schemas, INSERT values, queries, viva prep, and Professor Thangan AI.">
+    <meta name="description"
+        content="A modern, responsive interactive learning notebook for all 14 DBMS SQL & PL/SQL lab programs. Complete with schemas, INSERT values, queries, viva prep, and Professor Thangan AI.">
 
     <!-- Immediate Theme Initialization to Prevent Flash of Unstyled Theme (FOUC) -->
     <script>
-        (function() {
+        (function () {
             try {
                 const savedTheme = localStorage.getItem('dbms_theme');
                 const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -17,7 +19,7 @@
                 } else {
                     document.documentElement.classList.remove('dark');
                 }
-            } catch (e) {}
+            } catch (e) { }
         })();
     </script>
 
@@ -48,7 +50,9 @@
     <!-- Google Fonts: Inter for prose, Fira Code for code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap"
+        rel="stylesheet">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -94,16 +98,41 @@
         }
 
         /* Subtle smooth scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        html.dark ::-webkit-scrollbar-thumb { background: #334155; }
-        html.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        html.dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        html.dark ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
 
         /* Responsive scrollbar hiding */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
 
         /* Safe bottom inset for mobile phones (iPhone notch/pill) */
         .safe-bottom {
@@ -111,17 +140,24 @@
         }
 
         /* Smooth tap behavior on mobile */
-        button, select, a, input, textarea {
+        button,
+        select,
+        a,
+        input,
+        textarea {
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
         }
 
         /* Universal form control theme colors to prevent Windows Chromium select popup contrast bugs */
-        select, option, optgroup {
+        select,
+        option,
+        optgroup {
             background-color: #ffffff;
             color: #0f172a;
             color-scheme: light;
         }
+
         html.dark select,
         html.dark option,
         html.dark optgroup {
@@ -135,18 +171,21 @@
             background: var(--cell-bg);
             border: 1px solid var(--cell-border);
             border-radius: 14px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
             transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
         }
+
         .notebook-cell:hover {
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.04), 0 2px 4px -2px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
         }
+
         html.dark .notebook-cell {
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
         }
+
         html.dark .notebook-cell:hover {
             border-color: #2e3c54;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
         }
 
         /* Refined Developer Code Block */
@@ -166,23 +205,46 @@
         .tab-btn {
             transition: all 0.15s ease;
         }
+
         .tab-active {
             background-color: #2563eb !important;
             color: #ffffff !important;
             border-color: #2563eb !important;
-            box-shadow: 0 2px 4px rgba(37,99,235,0.25);
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
         }
+
         .tab-active span.badge {
-            background-color: rgba(255,255,255,0.25) !important;
+            background-color: rgba(255, 255, 255, 0.25) !important;
             color: #ffffff !important;
         }
 
         /* Clean Markdown Styling */
-        .ai-markdown p { margin-bottom: 0.6em; line-height: 1.65; color: #334155; }
-        html.dark .ai-markdown p { color: #cbd5e1; }
-        .ai-markdown ul, .ai-markdown ol { margin-left: 1.25em; margin-bottom: 0.6em; color: #334155; }
-        html.dark .ai-markdown ul, html.dark .ai-markdown ol { color: #cbd5e1; }
-        .ai-markdown li { margin-bottom: 0.25em; }
+        .ai-markdown p {
+            margin-bottom: 0.6em;
+            line-height: 1.65;
+            color: #334155;
+        }
+
+        html.dark .ai-markdown p {
+            color: #cbd5e1;
+        }
+
+        .ai-markdown ul,
+        .ai-markdown ol {
+            margin-left: 1.25em;
+            margin-bottom: 0.6em;
+            color: #334155;
+        }
+
+        html.dark .ai-markdown ul,
+        html.dark .ai-markdown ol {
+            color: #cbd5e1;
+        }
+
+        .ai-markdown li {
+            margin-bottom: 0.25em;
+        }
+
         .ai-markdown code {
             font-family: 'Fira Code', monospace;
             background: #f1f5f9;
@@ -193,11 +255,13 @@
             border: 1px solid #e2e8f0;
             word-break: break-word;
         }
+
         html.dark .ai-markdown code {
             background: #1e293b;
             color: #38bdf8;
             border-color: #334155;
         }
+
         .ai-markdown pre {
             background: #090d16;
             border: 1px solid #1e293b;
@@ -207,6 +271,7 @@
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
+
         .ai-markdown pre code {
             background: transparent;
             padding: 0;
@@ -214,80 +279,166 @@
             border: none;
             display: block;
         }
-        .ai-markdown strong { color: #0f172a; font-weight: 600; }
-        html.dark .ai-markdown strong { color: #f8fafc; }
-        .ai-markdown h3, .ai-markdown h4 { color: #0f172a; font-weight: 600; margin-top: 0.75em; margin-bottom: 0.3em; }
-        html.dark .ai-markdown h3, html.dark .ai-markdown h4 { color: #f8fafc; }
-        .ai-markdown table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 0.85em; }
-        .ai-markdown th, .ai-markdown td { border: 1px solid #e2e8f0; padding: 7px 10px; text-align: left; }
-        html.dark .ai-markdown th, html.dark .ai-markdown td { border-color: #1e293b; }
-        .ai-markdown th { background: #f8fafc; color: #0f172a; font-weight: 600; }
-        html.dark .ai-markdown th { background: #1e293b; color: #f1f5f9; }
-        html.dark .ai-markdown td { color: #cbd5e1; }
-        .ai-markdown blockquote { border-left: 3px solid #3b82f6; padding-left: 12px; color: #475569; margin: 10px 0; font-style: italic; }
-        html.dark .ai-markdown blockquote { color: #94a3b8; }
+
+        .ai-markdown strong {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        html.dark .ai-markdown strong {
+            color: #f8fafc;
+        }
+
+        .ai-markdown h3,
+        .ai-markdown h4 {
+            color: #0f172a;
+            font-weight: 600;
+            margin-top: 0.75em;
+            margin-bottom: 0.3em;
+        }
+
+        html.dark .ai-markdown h3,
+        html.dark .ai-markdown h4 {
+            color: #f8fafc;
+        }
+
+        .ai-markdown table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 10px 0;
+            font-size: 0.85em;
+        }
+
+        .ai-markdown th,
+        .ai-markdown td {
+            border: 1px solid #e2e8f0;
+            padding: 7px 10px;
+            text-align: left;
+        }
+
+        html.dark .ai-markdown th,
+        html.dark .ai-markdown td {
+            border-color: #1e293b;
+        }
+
+        .ai-markdown th {
+            background: #f8fafc;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        html.dark .ai-markdown th {
+            background: #1e293b;
+            color: #f1f5f9;
+        }
+
+        html.dark .ai-markdown td {
+            color: #cbd5e1;
+        }
+
+        .ai-markdown blockquote {
+            border-left: 3px solid #3b82f6;
+            padding-left: 12px;
+            color: #475569;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        html.dark .ai-markdown blockquote {
+            color: #94a3b8;
+        }
 
         /* Animated typing dots */
         .typing-dot {
             animation: bounceDot 1.4s infinite ease-in-out both;
         }
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
         @keyframes bounceDot {
-            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
-            40% { transform: scale(1); opacity: 1; }
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+                opacity: 0.3;
+            }
+
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-900 dark:selection:text-blue-100">
+
+<body
+    class="min-h-screen flex flex-col antialiased selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-900 dark:selection:text-blue-100">
 
     <!-- RESPONSIVE TOP NAVIGATION BAR -->
-    <header class="sticky top-0 z-30 bg-white/95 dark:bg-[#0b0f19]/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 px-3 sm:px-6 transition-colors">
+    <header
+        class="sticky top-0 z-30 bg-white/95 dark:bg-[#0b0f19]/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 px-3 sm:px-6 transition-colors">
         <div class="h-14 flex items-center justify-between gap-2 max-w-5xl mx-auto">
-            
+
             <!-- Left: Brand & Mobile/Desktop Index -->
             <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-                <button onclick="toggleTOCModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-[#131c2e] hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 transition-colors shadow-2xs active:scale-95" title="View all 14 lab programs">
+                <button onclick="toggleTOCModal()"
+                    class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-[#131c2e] hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 transition-colors shadow-2xs active:scale-95"
+                    title="View all 14 lab programs">
                     <i data-lucide="book-open" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                     <span class="inline">Index</span>
                 </button>
                 <div class="h-4 w-[1px] bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
                 <div class="flex items-center gap-1.5 sm:gap-2">
-                    <span class="font-bold text-slate-900 dark:text-white text-sm tracking-tight truncate">SQL Lab Notebook</span>
-                    <span class="text-[11px] text-slate-500 dark:text-slate-400 hidden lg:inline font-normal">with Professor Thangan</span>
+                    <span class="font-bold text-slate-900 dark:text-white text-sm tracking-tight truncate">SQL Lab
+                        Notebook</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 hidden lg:inline font-normal">with
+                        Professor Thangan</span>
                 </div>
             </div>
 
             <!-- Center: Desktop Program Switcher with Custom Dropdown -->
-            <div class="hidden md:flex items-center gap-1 bg-slate-100 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 rounded-xl p-0.5 shadow-xs relative" id="header-switcher-wrapper">
-                <button type="button" onclick="navigateToPreviousProgram()" class="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#1e293b] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all" id="btn-prev-prog" title="Previous Lab">
+            <div class="hidden md:flex items-center gap-1 bg-slate-100 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 rounded-xl p-0.5 shadow-xs relative"
+                id="header-switcher-wrapper">
+                <button type="button" onclick="navigateToPreviousProgram()"
+                    class="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#1e293b] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                    id="btn-prev-prog" title="Previous Lab">
                     <i data-lucide="chevron-left" class="w-4 h-4"></i>
                 </button>
 
                 <!-- Custom Dropdown Trigger Button -->
-                <button type="button" onclick="toggleProgramDropdown()" id="program-dropdown-trigger" class="flex items-center gap-2 px-2.5 py-1 text-xs font-semibold text-slate-800 dark:text-slate-100 hover:bg-white dark:hover:bg-[#1e293b] rounded-lg transition-all cursor-pointer max-w-[240px] lg:max-w-[340px] truncate" aria-haspopup="true" aria-expanded="false" title="Switch Lab Program">
-                    <span id="header-prog-badge" class="px-1.5 py-0.2 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-mono text-[10px] font-bold shrink-0">A1</span>
+                <button type="button" onclick="toggleProgramDropdown()" id="program-dropdown-trigger"
+                    class="flex items-center gap-2 px-2.5 py-1 text-xs font-semibold text-slate-800 dark:text-slate-100 hover:bg-white dark:hover:bg-[#1e293b] rounded-lg transition-all cursor-pointer max-w-[240px] lg:max-w-[340px] truncate"
+                    aria-haspopup="true" aria-expanded="false" title="Switch Lab Program">
+                    <span id="header-prog-badge"
+                        class="px-1.5 py-0.2 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-mono text-[10px] font-bold shrink-0">A1</span>
                     <span id="header-prog-title" class="truncate font-medium">Employee Table & Search Queries</span>
-                    <i data-lucide="chevron-down" id="header-prog-arrow" class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform"></i>
+                    <i data-lucide="chevron-down" id="header-prog-arrow"
+                        class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform"></i>
                 </button>
 
-                <button type="button" onclick="navigateToNextProgram()" class="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#1e293b] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all" id="btn-next-prog" title="Next Lab">
+                <button type="button" onclick="navigateToNextProgram()"
+                    class="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#1e293b] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                    id="btn-next-prog" title="Next Lab">
                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </button>
 
                 <!-- Floating Custom Dropdown Menu (100% styled HTML, zero OS white-on-white bug!) -->
-                <div id="program-dropdown-menu" class="hidden absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 sm:w-96 max-h-[440px] bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden transition-all">
+                <div id="program-dropdown-menu"
+                    class="hidden absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 sm:w-96 max-h-[440px] bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden transition-all">
                     <!-- Dropdown Search Bar -->
                     <div class="p-2.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#070a12]">
                         <div class="relative">
                             <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
-                            <input 
-                                type="text" 
-                                id="header-prog-search" 
-                                oninput="filterHeaderDropdown(this.value)" 
-                                placeholder="Search 14 lab programs..." 
-                                class="w-full bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500"
-                            >
+                            <input type="text" id="header-prog-search" oninput="filterHeaderDropdown(this.value)"
+                                placeholder="Search 14 lab programs..."
+                                class="w-full bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500">
                         </div>
                     </div>
 
@@ -300,42 +451,59 @@
 
             <!-- Right: Theory Cheatsheet, Theme Toggle & Settings -->
             <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-                <button onclick="showConceptsModal()" class="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-2 sm:px-2.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#131c2e] transition-colors" title="DBMS Cheatsheet">
+                <button onclick="showConceptsModal()"
+                    class="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-2 sm:px-2.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#131c2e] transition-colors"
+                    title="DBMS Cheatsheet">
                     <i data-lucide="bookmark" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                     <span class="hidden sm:inline font-medium">Cheatsheet</span>
                 </button>
 
                 <!-- DARK/LIGHT THEME TOGGLE BUTTON -->
-                <button id="theme-toggle-btn" onclick="toggleTheme()" class="p-2 rounded-lg text-slate-600 dark:text-amber-400 hover:text-slate-900 dark:hover:text-amber-300 hover:bg-slate-100 dark:hover:bg-[#131c2e] active:scale-95 transition-all" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+                <button id="theme-toggle-btn" onclick="toggleTheme()"
+                    class="p-2 rounded-lg text-slate-600 dark:text-amber-400 hover:text-slate-900 dark:hover:text-amber-300 hover:bg-slate-100 dark:hover:bg-[#131c2e] active:scale-95 transition-all"
+                    title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
                     <i data-lucide="moon" class="w-4 h-4"></i>
                 </button>
 
-                <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer" class="hidden lg:flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-2 py-1 rounded-md hover:bg-slate-100 dark:hover:bg-[#131c2e] transition-colors" title="Creator: Adi (@code-by-adi7)">
+                <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer"
+                    class="hidden lg:flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-2 py-1 rounded-md hover:bg-slate-100 dark:hover:bg-[#131c2e] transition-colors"
+                    title="Creator: Adi (@code-by-adi7)">
                     <span>by Adi</span>
                 </a>
 
-                <button onclick="openSettingsModal()" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131c2e] active:scale-95 transition-all" title="Settings & Provider">
+                <button onclick="openSettingsModal()"
+                    class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131c2e] active:scale-95 transition-all"
+                    title="Settings & Provider">
                     <i data-lucide="settings" class="w-4 h-4"></i>
                 </button>
             </div>
         </div>
 
         <!-- Mobile Dedicated Program Switcher Bar (< 768px) -->
-        <div class="md:hidden py-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-1.5 relative">
-            <button onclick="navigateToPreviousProgram()" class="p-2 rounded-lg bg-slate-50 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-[#1e293b] active:scale-95 disabled:opacity-30 transition-all shrink-0" id="btn-prev-prog-mobile" title="Previous Lab" aria-label="Previous Lab">
+        <div
+            class="md:hidden py-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-1.5 relative">
+            <button onclick="navigateToPreviousProgram()"
+                class="p-2 rounded-lg bg-slate-50 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-[#1e293b] active:scale-95 disabled:opacity-30 transition-all shrink-0"
+                id="btn-prev-prog-mobile" title="Previous Lab" aria-label="Previous Lab">
                 <i data-lucide="chevron-left" class="w-4 h-4"></i>
             </button>
 
             <!-- Mobile Center Button: Opens TOC modal with search -->
-            <button type="button" onclick="toggleTOCModal()" class="flex-1 min-w-0 bg-slate-50 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 rounded-xl px-2.5 py-1.5 shadow-2xs flex items-center justify-between gap-2 active:scale-98 transition-all cursor-pointer">
+            <button type="button" onclick="toggleTOCModal()"
+                class="flex-1 min-w-0 bg-slate-50 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 rounded-xl px-2.5 py-1.5 shadow-2xs flex items-center justify-between gap-2 active:scale-98 transition-all cursor-pointer">
                 <div class="flex items-center gap-1.5 truncate">
-                    <span id="mobile-prog-badge" class="px-1.5 py-0.2 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-mono text-[10px] font-bold shrink-0">A1</span>
-                    <span id="mobile-prog-title" class="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">Employee Table & Search Queries</span>
+                    <span id="mobile-prog-badge"
+                        class="px-1.5 py-0.2 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-mono text-[10px] font-bold shrink-0">A1</span>
+                    <span id="mobile-prog-title"
+                        class="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">Employee Table &
+                        Search Queries</span>
                 </div>
                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
             </button>
 
-            <button onclick="navigateToNextProgram()" class="p-2 rounded-lg bg-slate-50 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-[#1e293b] active:scale-95 disabled:opacity-30 transition-all shrink-0" id="btn-next-prog-mobile" title="Next Lab" aria-label="Next Lab">
+            <button onclick="navigateToNextProgram()"
+                class="p-2 rounded-lg bg-slate-50 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-[#1e293b] active:scale-95 disabled:opacity-30 transition-all shrink-0"
+                id="btn-next-prog-mobile" title="Next Lab" aria-label="Next Lab">
                 <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
         </div>
@@ -349,7 +517,8 @@
             <div class="notebook-cell p-4 sm:p-6 md:p-7">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span id="nb-part-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                        <span id="nb-part-badge"
+                            class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                             Part A · Program 1
                         </span>
                         <span id="nb-category-badge" class="text-xs text-slate-500 dark:text-slate-400 font-medium">
@@ -361,72 +530,92 @@
                     </span>
                 </div>
 
-                <h1 id="nb-title" class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug break-words">
+                <h1 id="nb-title"
+                    class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug break-words">
                     Employee Table & Search Queries
                 </h1>
-                
-                <p id="nb-description" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
-                    Create EMPLOYEE table with constraints. Search using LIKE, BETWEEN, DISTINCT, and departmental aggregation with GROUP BY & HAVING.
+
+                <p id="nb-description"
+                    class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                    Create EMPLOYEE table with constraints. Search using LIKE, BETWEEN, DISTINCT, and departmental
+                    aggregation with GROUP BY & HAVING.
                 </p>
 
                 <!-- Key Concepts Pills -->
-                <div id="nb-concepts-container" class="flex flex-wrap gap-1.5 mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <div id="nb-concepts-container"
+                    class="flex flex-wrap gap-1.5 mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800">
                     <!-- Populated dynamically -->
                 </div>
 
                 <!-- Thangan's Core Exam Anchor -->
-                <div class="mt-3.5 p-3 sm:p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/60 flex items-start gap-2.5 sm:gap-3">
-                    <div class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold shadow-2xs">
+                <div
+                    class="mt-3.5 p-3 sm:p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/60 flex items-start gap-2.5 sm:gap-3">
+                    <div
+                        class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold shadow-2xs">
                         💡
                     </div>
                     <div>
-                        <div class="text-[10px] sm:text-[11px] font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wider">Thangan's Core Exam Anchor</div>
-                        <p id="nb-memory-anchor" class="text-xs text-blue-950 dark:text-blue-200 mt-0.5 leading-relaxed italic">
-                            WHERE filters individual rows BEFORE grouping. HAVING filters aggregated bucket results AFTER grouping.
+                        <div
+                            class="text-[10px] sm:text-[11px] font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wider">
+                            Thangan's Core Exam Anchor</div>
+                        <p id="nb-memory-anchor"
+                            class="text-xs text-blue-950 dark:text-blue-200 mt-0.5 leading-relaxed italic">
+                            WHERE filters individual rows BEFORE grouping. HAVING filters aggregated bucket results
+                            AFTER grouping.
                         </p>
                     </div>
                 </div>
             </div>
 
             <!-- SMART TABBED NAVIGATION BAR (Fixes mobile wall-of-text fatigue!) -->
-            <div class="sticky top-14 z-20 bg-slate-100/90 dark:bg-[#0b0f19]/90 backdrop-blur-md py-2 -mx-3 px-3 sm:-mx-6 sm:px-6 border-y border-slate-200/80 dark:border-slate-800">
+            <div
+                class="sticky top-14 z-20 bg-slate-100/90 dark:bg-[#0b0f19]/90 backdrop-blur-md py-2 -mx-3 px-3 sm:-mx-6 sm:px-6 border-y border-slate-200/80 dark:border-slate-800">
                 <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
                     <!-- Tab: Queries & Solutions -->
-                    <button onclick="switchTab('queries')" data-tab="queries" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
+                    <button onclick="switchTab('queries')" data-tab="queries"
+                        class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
                         <i data-lucide="terminal" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400"></i>
                         <span id="tab-label-queries">Queries</span>
-                        <span id="tab-badge-queries" class="badge px-1.5 py-0.2 rounded-full text-[10px] bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-mono">5</span>
+                        <span id="tab-badge-queries"
+                            class="badge px-1.5 py-0.2 rounded-full text-[10px] bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-mono">5</span>
                     </button>
 
                     <!-- Tab: Tables & Insert Values -->
-                    <button onclick="switchTab('tables')" data-tab="tables" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
+                    <button onclick="switchTab('tables')" data-tab="tables"
+                        class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
                         <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
                         <span>Tables & Inserts</span>
-                        <span id="tab-badge-tables" class="badge px-1.5 py-0.2 rounded-full text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-mono">1</span>
+                        <span id="tab-badge-tables"
+                            class="badge px-1.5 py-0.2 rounded-full text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-mono">1</span>
                     </button>
 
                     <!-- Tab: Interactive Sandbox -->
-                    <button onclick="switchTab('practice')" data-tab="practice" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
+                    <button onclick="switchTab('practice')" data-tab="practice"
+                        class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
                         <i data-lucide="play" class="w-3.5 h-3.5 text-amber-500"></i>
                         <span>Sandbox</span>
                     </button>
 
                     <!-- Tab: Viva Prep -->
-                    <button onclick="switchTab('viva')" data-tab="viva" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
+                    <button onclick="switchTab('viva')" data-tab="viva"
+                        class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
                         <i data-lucide="award" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400"></i>
                         <span>Viva Prep</span>
-                        <span id="tab-badge-viva" class="badge px-1.5 py-0.2 rounded-full text-[10px] bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 font-mono">3</span>
+                        <span id="tab-badge-viva"
+                            class="badge px-1.5 py-0.2 rounded-full text-[10px] bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 font-mono">3</span>
                     </button>
 
                     <!-- Tab: Ask AI -->
-                    <button onclick="switchTab('discussion')" data-tab="discussion" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
+                    <button onclick="switchTab('discussion')" data-tab="discussion"
+                        class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
                         <i data-lucide="message-square" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400"></i>
                         <span>Ask AI</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     </button>
 
                     <!-- Tab: View All (For users who prefer single scroll) -->
-                    <button onclick="switchTab('all')" data-tab="all" class="tab-btn px-2.5 py-1.5 rounded-lg text-xs font-medium border border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 whitespace-nowrap active:scale-95 ml-auto">
+                    <button onclick="switchTab('all')" data-tab="all"
+                        class="tab-btn px-2.5 py-1.5 rounded-lg text-xs font-medium border border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 whitespace-nowrap active:scale-95 ml-auto">
                         <span>All</span>
                     </button>
                 </div>
@@ -436,15 +625,20 @@
             <div id="nb-queries-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/70 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                        <div
+                            class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/70 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                             <i data-lucide="terminal" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white" id="nb-queries-title">Queries & Official Solutions</h2>
-                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Official syntax and logic from the syllabus lab record.</p>
+                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white"
+                                id="nb-queries-title">Queries & Official Solutions</h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Official syntax and
+                                logic from the syllabus lab record.</p>
                         </div>
                     </div>
-                    <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#0f172a] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono" id="nb-queries-count">
+                    <span
+                        class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#0f172a] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono"
+                        id="nb-queries-count">
                         5 Queries
                     </span>
                 </div>
@@ -456,20 +650,27 @@
 
             <!-- SECTION: SCHEMA & INSERT TEST DATA CELL -->
             <div id="nb-schema-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100 dark:border-slate-800">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                        <div
+                            class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                             <i data-lucide="database" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Database Schemas & Insert Queries</h2>
-                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Complete CREATE TABLE DDL and INSERT statements to set up your database.</p>
+                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Database Schemas &
+                                Insert Queries</h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Complete CREATE TABLE
+                                DDL and INSERT statements to set up your database.</p>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2 self-start sm:self-auto">
-                        <span class="text-xs text-slate-500 dark:text-slate-400 font-mono" id="nb-table-count">1 Table</span>
-                        <button onclick="copyAllSetupSql(this)" class="text-xs bg-blue-600 hover:bg-blue-700 text-white font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-xs active:scale-95 transition-all" title="Copy all CREATE TABLE and INSERT statements for this lab">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-mono" id="nb-table-count">1
+                            Table</span>
+                        <button onclick="copyAllSetupSql(this)"
+                            class="text-xs bg-blue-600 hover:bg-blue-700 text-white font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-xs active:scale-95 transition-all"
+                            title="Copy all CREATE TABLE and INSERT statements for this lab">
                             <i data-lucide="layers" class="w-3.5 h-3.5"></i>
                             <span class="whitespace-nowrap">Copy All Setup SQL</span>
                         </button>
@@ -485,52 +686,58 @@
             <div id="nb-practice-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-3.5 sm:space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/70 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                        <div
+                            class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/70 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                             <i data-lucide="play" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Interactive Sandbox & Code Doctor</h2>
-                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Type or paste your query attempt below. Thangan will evaluate it against the syllabus.</p>
+                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Interactive Sandbox
+                                & Code Doctor</h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Type or paste your
+                                query attempt below. Thangan will evaluate it against the syllabus.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Select Question to Practice -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Select Exercise to Solve:</label>
-                    <select id="nb-practice-select" onchange="onNotebookPracticeSelectChange(this.value)" class="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-[#131c2e] transition-colors">
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Select Exercise
+                        to Solve:</label>
+                    <select id="nb-practice-select" onchange="onNotebookPracticeSelectChange(this.value)"
+                        class="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-[#131c2e] transition-colors">
                         <!-- Populated by JS -->
                     </select>
                 </div>
 
                 <!-- Code Editor Textarea -->
                 <div class="relative">
-                    <textarea 
-                        id="nb-practice-input" 
-                        rows="4" 
+                    <textarea id="nb-practice-input" rows="4"
                         class="w-full bg-[#0a0e17] border border-slate-800 rounded-lg p-3 sm:p-3.5 font-mono text-[11px] sm:text-xs text-blue-100 focus:outline-none focus:border-blue-500 leading-relaxed placeholder-slate-500"
-                        placeholder="-- Write your SQL solution here...&#10;SELECT * FROM ..."
-                    ></textarea>
+                        placeholder="-- Write your SQL solution here...&#10;SELECT * FROM ..."></textarea>
                 </div>
 
                 <!-- Practice Action Buttons -->
                 <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
                     <div class="flex items-center gap-2 flex-1 sm:flex-initial">
-                        <button onclick="checkPracticeWithThangan()" class="flex-1 sm:flex-initial bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 sm:px-4 py-2 rounded-lg flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all">
+                        <button onclick="checkPracticeWithThangan()"
+                            class="flex-1 sm:flex-initial bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 sm:px-4 py-2 rounded-lg flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all">
                             <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
                             <span>Check with Thangan</span>
                         </button>
-                        <button onclick="loadPracticeSolution()" class="flex-1 sm:flex-initial bg-white dark:bg-[#131c2e] hover:bg-slate-50 dark:hover:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium px-3 py-2 rounded-lg active:scale-95 transition-all">
+                        <button onclick="loadPracticeSolution()"
+                            class="flex-1 sm:flex-initial bg-white dark:bg-[#131c2e] hover:bg-slate-50 dark:hover:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium px-3 py-2 rounded-lg active:scale-95 transition-all">
                             <span>Reveal Solution</span>
                         </button>
                     </div>
-                    <button onclick="clearPracticeInput()" class="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-2 py-1 ml-auto">
+                    <button onclick="clearPracticeInput()"
+                        class="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-2 py-1 ml-auto">
                         Clear
                     </button>
                 </div>
 
                 <!-- Doctor Feedback Box -->
-                <div id="nb-practice-feedback" class="hidden mt-3 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0f172a] text-xs">
+                <div id="nb-practice-feedback"
+                    class="hidden mt-3 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0f172a] text-xs">
                     <!-- Populated by JS -->
                 </div>
             </div>
@@ -539,12 +746,15 @@
             <div id="nb-viva-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/70 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                        <div
+                            class="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/70 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                             <i data-lucide="award" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">University Viva Voce Preparation</h2>
-                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Official oral examination questions frequently asked on this experiment.</p>
+                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">University Viva Voce
+                                Preparation</h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Official oral
+                                examination questions frequently asked on this experiment.</p>
                         </div>
                     </div>
                 </div>
@@ -558,30 +768,39 @@
             <div id="nb-discussion-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                     <div class="flex items-center gap-2 sm:gap-2.5">
-                        <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-xs">
+                        <div
+                            class="w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-xs">
                             T
                         </div>
                         <div>
                             <div class="flex items-center gap-1.5">
-                                <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Discussion with Professor Thangan</h2>
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Free AI Online"></span>
+                                <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Discussion with
+                                    Professor Thangan</h2>
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
+                                    title="Free AI Online"></span>
                             </div>
-                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Ask any doubt about this lab. 100% Free & Unlimited.</p>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Ask any doubt about
+                                this lab. 100% Free & Unlimited.</p>
                         </div>
                     </div>
-                    
+
                     <div class="flex items-center gap-1">
-                        <button onclick="toggleVoiceSpeech()" id="nb-voice-toggle" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors" title="Toggle audio speech">
+                        <button onclick="toggleVoiceSpeech()" id="nb-voice-toggle"
+                            class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
+                            title="Toggle audio speech">
                             <i data-lucide="volume-2" class="w-4 h-4"></i>
                         </button>
-                        <button onclick="clearDiscussionThread()" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors" title="Clear discussion">
+                        <button onclick="clearDiscussionThread()"
+                            class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors"
+                            title="Clear discussion">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- Discussion Suggestion Chips (Swipeable on Mobile) -->
-                <div id="nb-discussion-chips" class="flex overflow-x-auto gap-1.5 pb-1 -mx-1 px-1 no-scrollbar sm:flex-wrap">
+                <div id="nb-discussion-chips"
+                    class="flex overflow-x-auto gap-1.5 pb-1 -mx-1 px-1 no-scrollbar sm:flex-wrap">
                     <!-- Dynamic chips -->
                 </div>
 
@@ -593,25 +812,21 @@
                 <!-- Discussion Input Form -->
                 <form id="nb-discussion-form" onsubmit="handleNotebookDiscussionSubmit(event)" class="pt-2">
                     <div class="flex gap-2">
-                        <input 
-                            type="text" 
-                            id="nb-discussion-input" 
-                            placeholder="Ask Professor Thangan any question about this lab..." 
+                        <input type="text" id="nb-discussion-input"
+                            placeholder="Ask Professor Thangan any question about this lab..."
                             class="flex-1 bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-xl px-3 sm:px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-[#131c2e] transition-colors"
-                            autocomplete="off"
-                        >
-                        <button 
-                            type="submit" 
-                            id="nb-discussion-submit" 
+                            autocomplete="off">
+                        <button type="submit" id="nb-discussion-submit"
                             class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 sm:px-4 py-2.5 rounded-xl font-medium text-xs flex items-center justify-center shadow-sm active:scale-95 transition-all shrink-0"
-                            aria-label="Send Message"
-                        >
+                            aria-label="Send Message">
                             <i data-lucide="send" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 mt-2 px-1">
+                    <div
+                        class="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 mt-2 px-1">
                         <span class="truncate">⚡ 100% Free AI • Zero API Keys Required</span>
-                        <button type="button" onclick="openSettingsModal()" class="text-blue-600 dark:text-blue-400 hover:underline shrink-0 ml-2">Settings</button>
+                        <button type="button" onclick="openSettingsModal()"
+                            class="text-blue-600 dark:text-blue-400 hover:underline shrink-0 ml-2">Settings</button>
                     </div>
                 </form>
             </div>
@@ -619,70 +834,92 @@
             <!-- Notebook Footer & Creator Details -->
             <footer class="border-t border-slate-200 dark:border-slate-800 pt-6 pb-4 text-center space-y-3">
                 <div>
-                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-200">DBMS Lab Interactive Notebook</p>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Complete Syllabus Guide • All 14 SQL & PL/SQL Programs with INSERT values</p>
+                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-200">DBMS Lab Interactive Notebook
+                    </p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Complete Syllabus Guide • All 14 SQL &
+                        PL/SQL Programs with INSERT values</p>
                 </div>
 
                 <!-- Creator Details Card -->
-                <div class="inline-flex flex-col sm:flex-row items-center gap-3 px-4 py-2.5 rounded-xl bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 shadow-xs max-w-full">
+                <div
+                    class="inline-flex flex-col sm:flex-row items-center gap-3 px-4 py-2.5 rounded-xl bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 shadow-xs max-w-full">
                     <div class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span>Created by <strong class="text-slate-900 dark:text-white font-semibold">Adi</strong></span>
+                        <span>Created by <strong
+                                class="text-slate-900 dark:text-white font-semibold">Adi</strong></span>
                     </div>
                     <div class="h-3 w-[1px] bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
                     <div class="flex items-center gap-2 flex-wrap justify-center">
                         <!-- Instagram -->
-                        <a href="https://instagram.com/adi_cazz__7" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-50 dark:bg-pink-950/40 hover:bg-pink-100 dark:hover:bg-pink-900/60 text-pink-700 dark:text-pink-300 text-xs font-semibold border border-pink-200 dark:border-pink-800/60 transition-all hover:scale-105 active:scale-95 shadow-2xs" title="Instagram: @adi_cazz__7">
-                            <svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        <a href="https://instagram.com/adi_cazz__7" target="_blank" rel="noopener noreferrer"
+                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-50 dark:bg-pink-950/40 hover:bg-pink-100 dark:hover:bg-pink-900/60 text-pink-700 dark:text-pink-300 text-xs font-semibold border border-pink-200 dark:border-pink-800/60 transition-all hover:scale-105 active:scale-95 shadow-2xs"
+                            title="Instagram: @adi_cazz__7">
+                            <svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg>
                             <span>@adi_cazz__7</span>
                         </a>
 
                         <!-- GitHub -->
-                        <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#1e293b] hover:bg-slate-200 dark:hover:bg-[#28354f] text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-300 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 shadow-2xs" title="GitHub: @code-by-adi7">
-                            <svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer"
+                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#1e293b] hover:bg-slate-200 dark:hover:bg-[#28354f] text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-300 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 shadow-2xs"
+                            title="GitHub: @code-by-adi7">
+                            <svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                            </svg>
                             <span>code-by-adi7</span>
                         </a>
                     </div>
                 </div>
 
-                <p class="text-[11px] text-slate-400 dark:text-slate-500">All 14 Programs • Prepared with Professor Thangan</p>
+                <p class="text-[11px] text-slate-400 dark:text-slate-500">All 14 Programs • Prepared with Professor
+                    Thangan</p>
             </footer>
 
         </div>
     </main>
 
     <!-- MOBILE BOTTOM NAVIGATION (Docked App Navigation with Direct Tab Switching) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0b0f19]/95 backdrop-blur-md border-t border-slate-200/90 dark:border-slate-800 shadow-xl safe-bottom transition-colors">
+    <nav
+        class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0b0f19]/95 backdrop-blur-md border-t border-slate-200/90 dark:border-slate-800 shadow-xl safe-bottom transition-colors">
         <div class="grid grid-cols-5 h-14 max-w-lg mx-auto text-[10px] font-medium text-slate-600 dark:text-slate-400">
             <!-- 1. Index Modal Button -->
-            <button onclick="toggleTOCModal()" class="flex flex-col items-center justify-center gap-1 active:scale-90 transition-transform">
+            <button onclick="toggleTOCModal()"
+                class="flex flex-col items-center justify-center gap-1 active:scale-90 transition-transform">
                 <i data-lucide="book-open" class="w-4 h-4"></i>
                 <span>Index</span>
             </button>
 
             <!-- 2. Queries Tab Button -->
-            <button onclick="switchTab('queries')" data-mobtab="queries" class="mob-nav-btn flex flex-col items-center justify-center gap-1 text-blue-600 dark:text-blue-400 font-bold active:scale-90 transition-all">
+            <button onclick="switchTab('queries')" data-mobtab="queries"
+                class="mob-nav-btn flex flex-col items-center justify-center gap-1 text-blue-600 dark:text-blue-400 font-bold active:scale-90 transition-all">
                 <i data-lucide="terminal" class="w-4 h-4"></i>
                 <span id="mob-label-queries">Queries</span>
             </button>
 
             <!-- 3. Tables & Inserts Tab Button -->
-            <button onclick="switchTab('tables')" data-mobtab="tables" class="mob-nav-btn flex flex-col items-center justify-center gap-1 active:scale-90 transition-all">
+            <button onclick="switchTab('tables')" data-mobtab="tables"
+                class="mob-nav-btn flex flex-col items-center justify-center gap-1 active:scale-90 transition-all">
                 <i data-lucide="database" class="w-4 h-4"></i>
                 <span>Tables</span>
             </button>
 
             <!-- 4. Sandbox Practice Tab Button -->
-            <button onclick="switchTab('practice')" data-mobtab="practice" class="mob-nav-btn flex flex-col items-center justify-center gap-1 active:scale-90 transition-all">
+            <button onclick="switchTab('practice')" data-mobtab="practice"
+                class="mob-nav-btn flex flex-col items-center justify-center gap-1 active:scale-90 transition-all">
                 <i data-lucide="play" class="w-4 h-4"></i>
                 <span>Sandbox</span>
             </button>
 
             <!-- 5. Ask AI Tab Button -->
-            <button onclick="switchTab('discussion')" data-mobtab="discussion" class="mob-nav-btn flex flex-col items-center justify-center gap-1 active:scale-90 transition-all">
+            <button onclick="switchTab('discussion')" data-mobtab="discussion"
+                class="mob-nav-btn flex flex-col items-center justify-center gap-1 active:scale-90 transition-all">
                 <div class="relative">
                     <i data-lucide="message-square" class="w-4 h-4"></i>
-                    <span class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span
+                        class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 </div>
                 <span>Ask AI</span>
             </button>
@@ -690,8 +927,10 @@
     </nav>
 
     <!-- TABLE OF CONTENTS (INDEX) MODAL -->
-    <div id="toc-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-xs p-0 sm:p-4 transition-all">
-        <div class="bg-white dark:bg-[#131c2e] border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-xl max-h-[90vh] sm:max-h-[85vh] flex flex-col shadow-2xl overflow-hidden transition-colors">
+    <div id="toc-modal"
+        class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-xs p-0 sm:p-4 transition-all">
+        <div
+            class="bg-white dark:bg-[#131c2e] border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-xl max-h-[90vh] sm:max-h-[85vh] flex flex-col shadow-2xl overflow-hidden transition-colors">
             <!-- Header -->
             <div class="p-3.5 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
@@ -699,9 +938,12 @@
                         <i data-lucide="book-open" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                         <span>Lab Notebook Index</span>
                     </h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Jump directly to any of the 14 lab exercises.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Jump directly to any of the 14 lab
+                        exercises.</p>
                 </div>
-                <button onclick="toggleTOCModal()" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-colors" aria-label="Close Index">
+                <button onclick="toggleTOCModal()"
+                    class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-colors"
+                    aria-label="Close Index">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -710,13 +952,9 @@
             <div class="p-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#0f172a]">
                 <div class="relative">
                     <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
-                    <input 
-                        type="text" 
-                        id="toc-search" 
-                        oninput="filterTOC(this.value)" 
-                        placeholder="Search queries, tables, or topics..." 
-                        class="w-full bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-blue-500"
-                    >
+                    <input type="text" id="toc-search" oninput="filterTOC(this.value)"
+                        placeholder="Search queries, tables, or topics..."
+                        class="w-full bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-blue-500">
                 </div>
             </div>
 
@@ -728,48 +966,62 @@
     </div>
 
     <!-- CORE CONCEPTS CHEATSHEET MODAL -->
-    <div id="concepts-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-xs p-0 sm:p-4 transition-all">
-        <div class="bg-white dark:bg-[#131c2e] border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col shadow-2xl overflow-hidden transition-colors">
+    <div id="concepts-modal"
+        class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-xs p-0 sm:p-4 transition-all">
+        <div
+            class="bg-white dark:bg-[#131c2e] border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col shadow-2xl overflow-hidden transition-colors">
             <div class="p-3.5 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <i data-lucide="bookmark" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                         <span>DBMS Core Concepts Cheatsheet</span>
                     </h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Key theoretical topics & syntax patterns tested by examiners.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Key theoretical topics & syntax
+                        patterns tested by examiners.</p>
                 </div>
-                <button onclick="closeConceptsModal()" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-colors" aria-label="Close Cheatsheet">
+                <button onclick="closeConceptsModal()"
+                    class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-colors"
+                    aria-label="Close Cheatsheet">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
-            <div id="concepts-list-container" class="p-3 sm:p-4 overflow-y-auto space-y-3 flex-1 bg-slate-50 dark:bg-[#0b0f19]">
+            <div id="concepts-list-container"
+                class="p-3 sm:p-4 overflow-y-auto space-y-3 flex-1 bg-slate-50 dark:bg-[#0b0f19]">
                 <!-- Populated by JS -->
             </div>
         </div>
     </div>
 
     <!-- PROVIDER & SETTINGS MODAL -->
-    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-xs p-0 sm:p-4 transition-all">
-        <div class="bg-white dark:bg-[#131c2e] border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-md max-h-[92vh] overflow-y-auto p-4 sm:p-5 shadow-2xl space-y-4 transition-colors">
+    <div id="settings-modal"
+        class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-xs p-0 sm:p-4 transition-all">
+        <div
+            class="bg-white dark:bg-[#131c2e] border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-md max-h-[92vh] overflow-y-auto p-4 sm:p-5 shadow-2xl space-y-4 transition-colors">
             <div class="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-slate-800">
                 <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <i data-lucide="settings" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                     <span>Tutor Settings</span>
                 </h3>
-                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-colors" aria-label="Close Settings">
+                <button onclick="closeSettingsModal()"
+                    class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-colors"
+                    aria-label="Close Settings">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <!-- Appearance Theme Setting -->
             <div class="space-y-2">
-                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Appearance Theme:</label>
+                <label
+                    class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Appearance
+                    Theme:</label>
                 <div class="grid grid-cols-2 gap-2">
-                    <button type="button" onclick="applyTheme('light')" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0f172a] hover:border-blue-500 text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-2 transition-all">
+                    <button type="button" onclick="applyTheme('light')"
+                        class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0f172a] hover:border-blue-500 text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-2 transition-all">
                         <i data-lucide="sun" class="w-4 h-4 text-amber-500"></i>
                         <span>Light Theme</span>
                     </button>
-                    <button type="button" onclick="applyTheme('dark')" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0f172a] hover:border-blue-500 text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-2 transition-all">
+                    <button type="button" onclick="applyTheme('dark')"
+                        class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0f172a] hover:border-blue-500 text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-2 transition-all">
                         <i data-lucide="moon" class="w-4 h-4 text-blue-400"></i>
                         <span>Dark Theme</span>
                     </button>
@@ -778,68 +1030,90 @@
 
             <!-- AI Provider Setting -->
             <div class="space-y-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">AI Engine for Professor Thangan:</label>
-                
-                <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/40 cursor-pointer">
-                    <input type="radio" name="ai_provider" value="free_cloud" checked class="mt-0.5 text-blue-600 focus:ring-0">
+                <label
+                    class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">AI
+                    Engine for Professor Thangan:</label>
+
+                <label
+                    class="flex items-start gap-2.5 p-2.5 rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/40 cursor-pointer">
+                    <input type="radio" name="ai_provider" value="free_cloud" checked
+                        class="mt-0.5 text-blue-600 focus:ring-0">
                     <div>
                         <div class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                             <span>Free Cloud AI (Pollinations.ai)</span>
-                            <span class="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-1.5 py-0.2 rounded font-semibold uppercase">Default</span>
+                            <span
+                                class="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-1.5 py-0.2 rounded font-semibold uppercase">Default</span>
                         </div>
-                        <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">100% Free, Unlimited, no API key required. High quality OpenAI/Llama models.</p>
+                        <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">100% Free, Unlimited, no API
+                            key required. High quality OpenAI/Llama models.</p>
                     </div>
                 </label>
 
-                <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] hover:bg-slate-50 dark:hover:bg-[#18243c] cursor-pointer">
+                <label
+                    class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] hover:bg-slate-50 dark:hover:bg-[#18243c] cursor-pointer">
                     <input type="radio" name="ai_provider" value="offline" class="mt-0.5 text-blue-600 focus:ring-0">
                     <div>
-                        <div class="text-xs font-bold text-slate-900 dark:text-white">Built-in Offline Knowledge Engine</div>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">100% Offline! Runs without internet using pre-programmed lab syllabus logic.</p>
+                        <div class="text-xs font-bold text-slate-900 dark:text-white">Built-in Offline Knowledge Engine
+                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">100% Offline! Runs without
+                            internet using pre-programmed lab syllabus logic.</p>
                     </div>
                 </label>
 
-                <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] hover:bg-slate-50 dark:hover:bg-[#18243c] cursor-pointer">
+                <label
+                    class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] hover:bg-slate-50 dark:hover:bg-[#18243c] cursor-pointer">
                     <input type="radio" name="ai_provider" value="gemini" class="mt-0.5 text-blue-600 focus:ring-0">
                     <div>
                         <div class="text-xs font-bold text-slate-900 dark:text-white">Custom Google Gemini API</div>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Use your personal Gemini API Key if desired.</p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Use your personal Gemini API
+                            Key if desired.</p>
                     </div>
                 </label>
             </div>
 
             <div id="api-key-container" class="hidden pt-1">
-                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Enter Gemini API Key:</label>
-                <input 
-                    type="password" 
-                    id="custom-api-key-input" 
-                    placeholder="AIzaSy..." 
-                    class="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500"
-                >
+                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Enter Gemini API
+                    Key:</label>
+                <input type="password" id="custom-api-key-input" placeholder="AIzaSy..."
+                    class="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500">
             </div>
 
             <!-- About Creator Details in Settings Modal -->
             <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
-                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">About Creator</div>
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">About
+                    Creator</div>
+                <div
+                    class="p-3 rounded-xl bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                     <div>
                         <div class="text-xs font-bold text-slate-900 dark:text-white">Adi</div>
                         <div class="text-[11px] text-slate-500 dark:text-slate-400">Instagram: @adi_cazz__7</div>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <a href="https://instagram.com/adi_cazz__7" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-pink-600 hover:bg-pink-50" title="Instagram: @adi_cazz__7">
-                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        <a href="https://instagram.com/adi_cazz__7" target="_blank" rel="noopener noreferrer"
+                            class="p-1.5 rounded-lg bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-pink-600 hover:bg-pink-50"
+                            title="Instagram: @adi_cazz__7">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg>
                         </a>
-                        <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-100" title="GitHub: code-by-adi7">
-                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer"
+                            class="p-1.5 rounded-lg bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-100"
+                            title="GitHub: code-by-adi7">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                            </svg>
                         </a>
                     </div>
                 </div>
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-                <button onclick="closeSettingsModal()" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">Cancel</button>
-                <button onclick="saveProviderSettings()" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white">Save</button>
+                <button onclick="closeSettingsModal()"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">Cancel</button>
+                <button onclick="saveProviderSettings()"
+                    class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white">Save</button>
             </div>
         </div>
     </div>
@@ -1043,11 +1317,10 @@
             const isCurrent = prog.id === activeProgramId;
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = `w-full text-left px-2.5 py-2 rounded-xl flex items-center justify-between gap-2.5 transition-colors cursor-pointer header-dropdown-item ${
-                isCurrent 
-                    ? 'bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800' 
+            btn.className = `w-full text-left px-2.5 py-2 rounded-xl flex items-center justify-between gap-2.5 transition-colors cursor-pointer header-dropdown-item ${isCurrent
+                    ? 'bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800'
                     : 'hover:bg-slate-100 dark:hover:bg-[#18243c] text-slate-700 dark:text-slate-200'
-            }`;
+                }`;
             btn.dataset.progId = prog.id;
             btn.dataset.search = `${prog.id} ${prog.title} ${prog.description}`.toLowerCase();
 
@@ -1552,7 +1825,7 @@
             `;
 
             const prompt = `Review my student SQL code for ${activeProgramId}: \n\`\`\`sql\n${input}\n\`\`\`\nCheck if this correctly satisfies the requirements from the record. Flag any errors, provide the correction, and give a score out of 10.`;
-            
+
             window.aiTutor.setMode('doctor');
             try {
                 const res = await window.aiTutor.ask(prompt);
@@ -1584,7 +1857,7 @@
                 item.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-3">
                         <h4 class="text-xs font-semibold text-slate-900 dark:text-white leading-snug">
-                            <span class="text-emerald-700 dark:text-emerald-400 font-bold mr-1">Q${i+1}.</span> ${escapeHtml(vq.q)}
+                            <span class="text-emerald-700 dark:text-emerald-400 font-bold mr-1">Q${i + 1}.</span> ${escapeHtml(vq.q)}
                         </h4>
                         <button onclick="askThanganVivaQuestion(\`${escapeJsString(vq.q)}\`)" class="text-[11px] bg-white dark:bg-[#131c2e] hover:bg-slate-100 dark:hover:bg-[#1e293b] text-blue-600 dark:text-blue-400 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 font-medium transition-colors shrink-0 self-start active:scale-95 shadow-2xs">
                             Oral Exam Prep
@@ -1973,4 +2246,5 @@
         }
     </script>
 </body>
+
 </html>
