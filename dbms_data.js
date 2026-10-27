@@ -1045,8 +1045,19 @@ const DBMS_PROGRAMS = [
         "name": "ITEM_TRANS",
         "columns": "ITEMNO (FK), QUANTITY, TRANS_DATE",
         "createSql": "CREATE TABLE item_trans (\n  itemno NUMBER REFERENCES item_master(itemno),\n  quantity NUMBER NOT NULL,\n  trans_date DATE NOT NULL\n);",
-        "insertSql": "-- Transactions logged by procedure",
-        "sampleRecords": []
+        "insertSql": "-- Option 1: Transacted automatically via package procedure:\n-- EXEC pck_item.proc_item(1, 4);\n-- Option 2: Direct Manual Insert for Testing:\nINSERT INTO item_trans VALUES (1, 4, SYSDATE);\nINSERT INTO item_trans VALUES (2, 2, SYSDATE);",
+        "sampleRecords": [
+          {
+            "ITEMNO": 1,
+            "QUANTITY": 4,
+            "TRANS_DATE": "SYSDATE"
+          },
+          {
+            "ITEMNO": 2,
+            "QUANTITY": 2,
+            "TRANS_DATE": "SYSDATE"
+          }
+        ]
       }
     ],
     "plsql": "SET SERVEROUTPUT ON;\n\n-- 1. Package Specification (Public Interface / Menu)\nCREATE OR REPLACE PACKAGE pck_item AS\n  FUNCTION chk_item(p_itemno IN NUMBER) RETURN NUMBER;\n  PROCEDURE proc_item(p_itemno IN NUMBER, p_qty IN NUMBER);\nEND pck_item;\n/\n\n-- 2. Package Body (Implementation / Kitchen)\nCREATE OR REPLACE PACKAGE BODY pck_item AS\n\n  -- Function to check whether item exists\n  FUNCTION chk_item(p_itemno IN NUMBER) RETURN NUMBER IS\n    v_count NUMBER;\n  BEGIN\n    SELECT COUNT(*) INTO v_count FROM item_master WHERE itemno = p_itemno;\n    IF v_count = 1 THEN RETURN 1; ELSE RETURN 0; END IF;\n  END chk_item;\n\n  -- Procedure to process transaction and update stock\n  PROCEDURE proc_item(p_itemno IN NUMBER, p_qty IN NUMBER) IS\n    v_stock item_master.stock%TYPE;\n    v_name item_master.name%TYPE;\n    v_price item_master.unit_price%TYPE;\n  BEGIN\n    -- Check item existence using package function\n    IF chk_item(p_itemno) = 0 THEN\n      DBMS_OUTPUT.PUT_LINE('Item does not exist in master catalog!');\n      RETURN;\n    END IF;\n    \n    SELECT stock, name, unit_price INTO v_stock, v_name, v_price\n    FROM item_master WHERE itemno = p_itemno;\n    \n    IF p_qty > v_stock THEN\n      DBMS_OUTPUT.PUT_LINE('Insufficient stock! Available: ' || v_stock);\n    ELSE\n      INSERT INTO item_trans VALUES (p_itemno, p_qty, SYSDATE);\n      UPDATE item_master SET stock = stock - p_qty WHERE itemno = p_itemno;\n      DBMS_OUTPUT.PUT_LINE('Transaction Recorded for ' || v_name);\n      DBMS_OUTPUT.PUT_LINE('Total Cost: Rs. ' || (v_price * p_qty));\n      COMMIT;\n    END IF;\n  END proc_item;\n\nEND pck_item;\n/\n\n-- 3. Execution Block\nBEGIN\n  pck_item.proc_item(1, 4); -- Buy 4 units of item 1\nEND;\n/",
@@ -1109,15 +1120,41 @@ const DBMS_PROGRAMS = [
         "name": "SALES",
         "columns": "SALE_ID (PK), PRODUCT_ID (FK), QUANTITY_SOLD, SALE_DATE",
         "createSql": "CREATE TABLE sales (\n  sale_id NUMBER PRIMARY KEY,\n  product_id NUMBER REFERENCES master(product_id),\n  quantity_sold NUMBER NOT NULL,\n  sale_date DATE NOT NULL\n);",
-        "insertSql": "-- Handled by Trigger",
-        "sampleRecords": []
+        "insertSql": "-- Insert into SALES to test AFTER INSERT trigger (trg_after_sales):\nINSERT INTO sales VALUES (1, 101, 10, SYSDATE);\nINSERT INTO sales VALUES (2, 102, 5, SYSDATE);",
+        "sampleRecords": [
+          {
+            "SALE_ID": 1,
+            "PRODUCT_ID": 101,
+            "QUANTITY_SOLD": 10,
+            "SALE_DATE": "SYSDATE"
+          },
+          {
+            "SALE_ID": 2,
+            "PRODUCT_ID": 102,
+            "QUANTITY_SOLD": 5,
+            "SALE_DATE": "SYSDATE"
+          }
+        ]
       },
       {
         "name": "NEWSTOCK",
         "columns": "STOCK_ID (PK), PRODUCT_ID (FK), QUANTITY_ADDED, STOCK_DATE",
         "createSql": "CREATE TABLE newstock (\n  stock_id NUMBER PRIMARY KEY,\n  product_id NUMBER REFERENCES master(product_id),\n  quantity_added NUMBER NOT NULL,\n  stock_date DATE NOT NULL\n);",
-        "insertSql": "-- Handled by Trigger",
-        "sampleRecords": []
+        "insertSql": "-- Insert into NEWSTOCK to test AFTER INSERT/UPDATE/DELETE trigger (trg_dml_newstock):\nINSERT INTO newstock VALUES (501, 101, 50, SYSDATE);\nINSERT INTO newstock VALUES (502, 102, 30, SYSDATE);",
+        "sampleRecords": [
+          {
+            "STOCK_ID": 501,
+            "PRODUCT_ID": 101,
+            "QUANTITY_ADDED": 50,
+            "STOCK_DATE": "SYSDATE"
+          },
+          {
+            "STOCK_ID": 502,
+            "PRODUCT_ID": 102,
+            "QUANTITY_ADDED": 30,
+            "STOCK_DATE": "SYSDATE"
+          }
+        ]
       }
     ],
     "plsql": "SET SERVEROUTPUT ON;\n\n-- Trigger 1: Automatically updates MASTER table when sales occur\nCREATE OR REPLACE TRIGGER trg_after_sales\nAFTER INSERT ON sales\nFOR EACH ROW\nBEGIN\n  UPDATE master\n  SET total_sales = NVL(total_sales, 0) + :new.quantity_sold,\n      current_stock = NVL(current_stock, 0) - :new.quantity_sold\n  WHERE product_id = :new.product_id;\nEND;\n/\n\n-- Trigger 2: Automatically updates MASTER when stock shipments are modified\nCREATE OR REPLACE TRIGGER trg_dml_newstock\nAFTER INSERT OR UPDATE OR DELETE ON newstock\nFOR EACH ROW\nBEGIN\n  IF INSERTING THEN\n    UPDATE master\n    SET current_stock = NVL(current_stock, 0) + :new.quantity_added\n    WHERE product_id = :new.product_id;\n    \n  ELSIF DELETING THEN\n    UPDATE master\n    SET current_stock = NVL(current_stock, 0) - :old.quantity_added\n    WHERE product_id = :old.product_id;\n    \n  ELSIF UPDATING THEN\n    UPDATE master\n    SET current_stock = current_stock - :old.quantity_added + :new.quantity_added\n    WHERE product_id = :new.product_id;\n  END IF;\nEND;\n/\n\n-- Test Trigger Execution:\nINSERT INTO sales VALUES (1, 101, 10, SYSDATE);\n-- Verify Master table updated:\nSELECT * FROM master WHERE product_id = 101;\n-- Current Stock drops to 90, Total Sales increases to 10!\n",

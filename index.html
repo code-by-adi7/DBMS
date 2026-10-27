@@ -1,22 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL Lab Notebook — with Professor Thangan</title>
-    <meta name="description" content="A clean, distraction-free interactive learning notebook for all 14 DBMS SQL & PL/SQL lab programs. Taught by Professor Thangan. 100% Free & Unlimited.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>SQL Lab Notebook — Interactive DBMS Lab Guide & AI Tutor</title>
+    <meta name="description" content="A modern, responsive interactive learning notebook for all 14 DBMS SQL & PL/SQL lab programs. Complete with schemas, INSERT values, queries, viva prep, and Professor Thangan AI.">
 
-    <!-- Tailwind CSS -->
+    <!-- Immediate Theme Initialization to Prevent Flash of Unstyled Theme (FOUC) -->
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('dbms_theme');
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+
+    <!-- Tailwind CSS with Dark Mode Class Strategy -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        slate: {
-                            850: '#172033',
-                            900: '#0f172a',
-                            950: '#020617'
+                        dark: {
+                            base: '#0b0f19',
+                            card: '#131c2e',
+                            cardHover: '#18243c',
+                            border: '#1e293b',
+                            borderSubtle: '#182338',
+                            code: '#070a12',
+                            text: '#f1f5f9',
+                            muted: '#94a3b8'
                         }
                     }
                 }
@@ -27,7 +48,7 @@
     <!-- Google Fonts: Inter for prose, Fira Code for code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -40,13 +61,34 @@
     <script src="ai_tutor.js"></script>
 
     <style>
+        :root {
+            --app-bg: #f8fafc;
+            --app-text: #0f172a;
+            --cell-bg: #ffffff;
+            --cell-border: #e2e8f0;
+            --code-bg: #111827;
+            --code-border: #1f2937;
+        }
+
+        html.dark {
+            color-scheme: dark;
+            --app-bg: #0b0f19;
+            --app-text: #f1f5f9;
+            --cell-bg: #131c2e;
+            --cell-border: #1e293b;
+            --code-bg: #070a12;
+            --code-border: #1e293b;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #fafaf9; /* Warm paper tone */
-            color: #1e293b;
+            background-color: var(--app-bg);
+            color: var(--app-text);
             overflow-x: hidden;
             max-width: 100vw;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
+
         .font-mono {
             font-family: 'Fira Code', monospace;
         }
@@ -56,6 +98,8 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        html.dark ::-webkit-scrollbar-thumb { background: #334155; }
+        html.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
         /* Responsive scrollbar hiding */
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -63,7 +107,7 @@
 
         /* Safe bottom inset for mobile phones (iPhone notch/pill) */
         .safe-bottom {
-            padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+            padding-bottom: max(env(safe-area-inset-bottom), 0.6rem);
         }
 
         /* Smooth tap behavior on mobile */
@@ -72,24 +116,44 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Jupyter/Brilliant Style Notebook Cell Styling */
-        .notebook-cell {
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03);
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        /* Universal form control theme colors to prevent Windows Chromium select popup contrast bugs */
+        select, option, optgroup {
+            background-color: #ffffff;
+            color: #0f172a;
+            color-scheme: light;
         }
-        .notebook-cell:hover {
-            border-color: #d1d5db;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -2px rgba(0,0,0,0.03);
+        html.dark select,
+        html.dark option,
+        html.dark optgroup {
+            background-color: #131c2e !important;
+            color: #f1f5f9 !important;
+            color-scheme: dark !important;
         }
 
-        /* Refined Developer Code Block (No harsh voids) */
+        /* Notebook Cell Styling */
+        .notebook-cell {
+            background: var(--cell-bg);
+            border: 1px solid var(--cell-border);
+            border-radius: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+        }
+        .notebook-cell:hover {
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.04), 0 2px 4px -2px rgba(0,0,0,0.02);
+        }
+        html.dark .notebook-cell {
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        }
+        html.dark .notebook-cell:hover {
+            border-color: #2e3c54;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        /* Refined Developer Code Block */
         .code-container {
-            background: #1e2433;
-            border: 1px solid #2d3748;
-            border-radius: 8px;
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 10px;
             color: #e2e8f0;
             position: relative;
             font-family: 'Fira Code', monospace;
@@ -98,9 +162,26 @@
             -webkit-overflow-scrolling: touch;
         }
 
+        /* Tab Switcher Styling */
+        .tab-btn {
+            transition: all 0.15s ease;
+        }
+        .tab-active {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 2px 4px rgba(37,99,235,0.25);
+        }
+        .tab-active span.badge {
+            background-color: rgba(255,255,255,0.25) !important;
+            color: #ffffff !important;
+        }
+
         /* Clean Markdown Styling */
         .ai-markdown p { margin-bottom: 0.6em; line-height: 1.65; color: #334155; }
+        html.dark .ai-markdown p { color: #cbd5e1; }
         .ai-markdown ul, .ai-markdown ol { margin-left: 1.25em; margin-bottom: 0.6em; color: #334155; }
+        html.dark .ai-markdown ul, html.dark .ai-markdown ol { color: #cbd5e1; }
         .ai-markdown li { margin-bottom: 0.25em; }
         .ai-markdown code {
             font-family: 'Fira Code', monospace;
@@ -112,9 +193,14 @@
             border: 1px solid #e2e8f0;
             word-break: break-word;
         }
+        html.dark .ai-markdown code {
+            background: #1e293b;
+            color: #38bdf8;
+            border-color: #334155;
+        }
         .ai-markdown pre {
-            background: #1e2433;
-            border: 1px solid #2d3748;
+            background: #090d16;
+            border: 1px solid #1e293b;
             border-radius: 8px;
             padding: 12px 14px;
             margin: 10px 0;
@@ -129,11 +215,17 @@
             display: block;
         }
         .ai-markdown strong { color: #0f172a; font-weight: 600; }
+        html.dark .ai-markdown strong { color: #f8fafc; }
         .ai-markdown h3, .ai-markdown h4 { color: #0f172a; font-weight: 600; margin-top: 0.75em; margin-bottom: 0.3em; }
+        html.dark .ai-markdown h3, html.dark .ai-markdown h4 { color: #f8fafc; }
         .ai-markdown table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 0.85em; }
         .ai-markdown th, .ai-markdown td { border: 1px solid #e2e8f0; padding: 7px 10px; text-align: left; }
+        html.dark .ai-markdown th, html.dark .ai-markdown td { border-color: #1e293b; }
         .ai-markdown th { background: #f8fafc; color: #0f172a; font-weight: 600; }
+        html.dark .ai-markdown th { background: #1e293b; color: #f1f5f9; }
+        html.dark .ai-markdown td { color: #cbd5e1; }
         .ai-markdown blockquote { border-left: 3px solid #3b82f6; padding-left: 12px; color: #475569; margin: 10px 0; font-style: italic; }
+        html.dark .ai-markdown blockquote { color: #94a3b8; }
 
         /* Animated typing dots */
         .typing-dot {
@@ -147,184 +239,266 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-blue-100 selection:text-blue-900">
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-900 dark:selection:text-blue-100">
 
     <!-- RESPONSIVE TOP NAVIGATION BAR -->
-    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-3 sm:px-6">
+    <header class="sticky top-0 z-30 bg-white/95 dark:bg-[#0b0f19]/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 px-3 sm:px-6 transition-colors">
         <div class="h-14 flex items-center justify-between gap-2 max-w-5xl mx-auto">
             
             <!-- Left: Brand & Mobile/Desktop Index -->
             <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-                <button onclick="toggleTOCModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors shadow-2xs active:scale-95" title="View all 14 lab programs">
-                    <i data-lucide="book-open" class="w-4 h-4 text-blue-600"></i>
+                <button onclick="toggleTOCModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-[#131c2e] hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-800 transition-colors shadow-2xs active:scale-95" title="View all 14 lab programs">
+                    <i data-lucide="book-open" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                     <span class="inline">Index</span>
                 </button>
-                <div class="h-4 w-[1px] bg-slate-200 hidden sm:block"></div>
+                <div class="h-4 w-[1px] bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
                 <div class="flex items-center gap-1.5 sm:gap-2">
-                    <span class="font-bold text-slate-900 text-sm tracking-tight truncate">SQL Lab Notebook</span>
-                    <span class="text-[11px] text-slate-500 hidden lg:inline font-normal">with Professor Thangan</span>
+                    <span class="font-bold text-slate-900 dark:text-white text-sm tracking-tight truncate">SQL Lab Notebook</span>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 hidden lg:inline font-normal">with Professor Thangan</span>
                 </div>
             </div>
 
-            <!-- Center: Desktop Program Switcher (Hidden on Mobile/Small screens < 768px) -->
-            <div class="hidden md:flex items-center gap-1.5 bg-slate-50 border border-slate-200/90 rounded-lg p-0.5 shadow-xs">
-                <button onclick="navigateToPreviousProgram()" class="p-1.5 rounded hover:bg-white text-slate-600 hover:text-slate-900 disabled:opacity-30 disabled:hover:bg-transparent transition-colors" id="btn-prev-prog" title="Previous Lab">
+            <!-- Center: Desktop Program Switcher with Custom Dropdown -->
+            <div class="hidden md:flex items-center gap-1 bg-slate-100 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 rounded-xl p-0.5 shadow-xs relative" id="header-switcher-wrapper">
+                <button type="button" onclick="navigateToPreviousProgram()" class="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#1e293b] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all" id="btn-prev-prog" title="Previous Lab">
                     <i data-lucide="chevron-left" class="w-4 h-4"></i>
                 </button>
 
-                <select id="header-program-select" onchange="onProgramSelectChange(this.value)" class="bg-transparent text-xs font-semibold text-slate-800 py-1 px-1.5 focus:outline-none cursor-pointer max-w-[200px] lg:max-w-[280px] truncate">
-                    <!-- Dynamically populated -->
-                </select>
+                <!-- Custom Dropdown Trigger Button -->
+                <button type="button" onclick="toggleProgramDropdown()" id="program-dropdown-trigger" class="flex items-center gap-2 px-2.5 py-1 text-xs font-semibold text-slate-800 dark:text-slate-100 hover:bg-white dark:hover:bg-[#1e293b] rounded-lg transition-all cursor-pointer max-w-[240px] lg:max-w-[340px] truncate" aria-haspopup="true" aria-expanded="false" title="Switch Lab Program">
+                    <span id="header-prog-badge" class="px-1.5 py-0.2 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-mono text-[10px] font-bold shrink-0">A1</span>
+                    <span id="header-prog-title" class="truncate font-medium">Employee Table & Search Queries</span>
+                    <i data-lucide="chevron-down" id="header-prog-arrow" class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform"></i>
+                </button>
 
-                <button onclick="navigateToNextProgram()" class="p-1.5 rounded hover:bg-white text-slate-600 hover:text-slate-900 disabled:opacity-30 disabled:hover:bg-transparent transition-colors" id="btn-next-prog" title="Next Lab">
+                <button type="button" onclick="navigateToNextProgram()" class="p-1.5 rounded-lg hover:bg-white dark:hover:bg-[#1e293b] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all" id="btn-next-prog" title="Next Lab">
                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </button>
+
+                <!-- Floating Custom Dropdown Menu (100% styled HTML, zero OS white-on-white bug!) -->
+                <div id="program-dropdown-menu" class="hidden absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 sm:w-96 max-h-[440px] bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden transition-all">
+                    <!-- Dropdown Search Bar -->
+                    <div class="p-2.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#070a12]">
+                        <div class="relative">
+                            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                            <input 
+                                type="text" 
+                                id="header-prog-search" 
+                                oninput="filterHeaderDropdown(this.value)" 
+                                placeholder="Search 14 lab programs..." 
+                                class="w-full bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Scrollable List of Programs -->
+                    <div class="p-2 overflow-y-auto flex-1 space-y-2 no-scrollbar" id="header-dropdown-items-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
             </div>
 
-            <!-- Right: Study Reference, Settings & Creator -->
+            <!-- Right: Theory Cheatsheet, Theme Toggle & Settings -->
             <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-                <button onclick="showConceptsModal()" class="flex items-center gap-1 text-xs text-slate-600 hover:text-slate-900 px-2 sm:px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition-colors" title="DBMS Cheatsheet">
-                    <i data-lucide="bookmark" class="w-4 h-4 text-blue-600"></i>
+                <button onclick="showConceptsModal()" class="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-2 sm:px-2.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#131c2e] transition-colors" title="DBMS Cheatsheet">
+                    <i data-lucide="bookmark" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                     <span class="hidden sm:inline font-medium">Cheatsheet</span>
                 </button>
-                
-                <button onclick="scrollToDiscussion()" class="hidden sm:flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-xs active:scale-95 transition-all">
-                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
-                    <span>Ask Thangan</span>
+
+                <!-- DARK/LIGHT THEME TOGGLE BUTTON -->
+                <button id="theme-toggle-btn" onclick="toggleTheme()" class="p-2 rounded-lg text-slate-600 dark:text-amber-400 hover:text-slate-900 dark:hover:text-amber-300 hover:bg-slate-100 dark:hover:bg-[#131c2e] active:scale-95 transition-all" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+                    <i data-lucide="moon" class="w-4 h-4"></i>
                 </button>
 
-                <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer" class="hidden lg:flex items-center gap-1 text-[11px] font-medium text-slate-500 hover:text-slate-900 px-2 py-1 rounded-md hover:bg-slate-100 transition-colors" title="Creator: Adi (@code-by-adi7)">
+                <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer" class="hidden lg:flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white px-2 py-1 rounded-md hover:bg-slate-100 dark:hover:bg-[#131c2e] transition-colors" title="Creator: Adi (@code-by-adi7)">
                     <span>by Adi</span>
                 </a>
 
-                <button onclick="openSettingsModal()" class="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 active:scale-95 transition-all" title="Settings & Provider">
+                <button onclick="openSettingsModal()" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#131c2e] active:scale-95 transition-all" title="Settings & Provider">
                     <i data-lucide="settings" class="w-4 h-4"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Mobile Dedicated Program Switcher Bar (Visible on screens < 768px) -->
-        <div class="md:hidden py-2 border-t border-slate-100 flex items-center justify-between gap-1.5">
-            <button onclick="navigateToPreviousProgram()" class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white active:scale-95 disabled:opacity-30 transition-all shrink-0" id="btn-prev-prog-mobile" title="Previous Lab" aria-label="Previous Lab">
+        <!-- Mobile Dedicated Program Switcher Bar (< 768px) -->
+        <div class="md:hidden py-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-1.5 relative">
+            <button onclick="navigateToPreviousProgram()" class="p-2 rounded-lg bg-slate-50 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-[#1e293b] active:scale-95 disabled:opacity-30 transition-all shrink-0" id="btn-prev-prog-mobile" title="Previous Lab" aria-label="Previous Lab">
                 <i data-lucide="chevron-left" class="w-4 h-4"></i>
             </button>
 
-            <div class="flex-1 min-w-0 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 shadow-2xs flex items-center">
-                <select id="mobile-program-select" onchange="onProgramSelectChange(this.value)" class="w-full bg-transparent text-xs font-semibold text-slate-800 focus:outline-none cursor-pointer truncate">
-                    <!-- Dynamically populated -->
-                </select>
-            </div>
+            <!-- Mobile Center Button: Opens TOC modal with search -->
+            <button type="button" onclick="toggleTOCModal()" class="flex-1 min-w-0 bg-slate-50 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 rounded-xl px-2.5 py-1.5 shadow-2xs flex items-center justify-between gap-2 active:scale-98 transition-all cursor-pointer">
+                <div class="flex items-center gap-1.5 truncate">
+                    <span id="mobile-prog-badge" class="px-1.5 py-0.2 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-mono text-[10px] font-bold shrink-0">A1</span>
+                    <span id="mobile-prog-title" class="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">Employee Table & Search Queries</span>
+                </div>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+            </button>
 
-            <button onclick="navigateToNextProgram()" class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white active:scale-95 disabled:opacity-30 transition-all shrink-0" id="btn-next-prog-mobile" title="Next Lab" aria-label="Next Lab">
+            <button onclick="navigateToNextProgram()" class="p-2 rounded-lg bg-slate-50 dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-[#1e293b] active:scale-95 disabled:opacity-30 transition-all shrink-0" id="btn-next-prog-mobile" title="Next Lab" aria-label="Next Lab">
                 <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
         </div>
     </header>
 
-    <!-- CENTERED NOTEBOOK CANVAS (Responsive for Mobile, Tablet & Desktop) -->
+    <!-- CENTERED NOTEBOOK CANVAS -->
     <main class="flex-1 overflow-y-auto pb-24 md:pb-12">
-        <div class="max-w-3xl mx-auto px-3 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-6">
+        <div class="max-w-4xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-5">
 
             <!-- 1. CHAPTER HEADER CELL -->
             <div class="notebook-cell p-4 sm:p-6 md:p-7">
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span id="nb-part-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                        <span id="nb-part-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                             Part A · Program 1
                         </span>
-                        <span id="nb-category-badge" class="text-xs text-slate-500 font-medium">
+                        <span id="nb-category-badge" class="text-xs text-slate-500 dark:text-slate-400 font-medium">
                             SQL Table DDL & Queries
                         </span>
                     </div>
-                    <span id="nb-progress-counter" class="text-[11px] text-slate-400 font-mono">
+                    <span id="nb-progress-counter" class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">
                         Lab 1 of 14
                     </span>
                 </div>
 
-                <h1 id="nb-title" class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 tracking-tight leading-snug break-words">
+                <h1 id="nb-title" class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug break-words">
                     Employee Table & Search Queries
                 </h1>
                 
-                <p id="nb-description" class="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed">
-                    Create EMPLOYEE table with constraints (Primary Key, CHECK, NOT NULL). Search using LIKE, BETWEEN, DISTINCT, and departmental aggregation with GROUP BY & HAVING.
+                <p id="nb-description" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                    Create EMPLOYEE table with constraints. Search using LIKE, BETWEEN, DISTINCT, and departmental aggregation with GROUP BY & HAVING.
                 </p>
 
                 <!-- Key Concepts Pills -->
-                <div id="nb-concepts-container" class="flex flex-wrap gap-1.5 mt-4 pt-3.5 border-t border-slate-100">
+                <div id="nb-concepts-container" class="flex flex-wrap gap-1.5 mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800">
                     <!-- Populated dynamically -->
                 </div>
 
-                <!-- Thangan's Intuitive Exam Memory Anchor -->
-                <div class="mt-4 p-3 sm:p-3.5 rounded-lg bg-blue-50/60 border border-blue-200/80 flex items-start gap-2.5 sm:gap-3">
+                <!-- Thangan's Core Exam Anchor -->
+                <div class="mt-3.5 p-3 sm:p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/60 flex items-start gap-2.5 sm:gap-3">
                     <div class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold shadow-2xs">
                         💡
                     </div>
                     <div>
-                        <div class="text-[10px] sm:text-[11px] font-bold text-blue-900 uppercase tracking-wider">Thangan's Core Exam Anchor</div>
-                        <p id="nb-memory-anchor" class="text-xs text-blue-950 mt-0.5 leading-relaxed italic">
+                        <div class="text-[10px] sm:text-[11px] font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wider">Thangan's Core Exam Anchor</div>
+                        <p id="nb-memory-anchor" class="text-xs text-blue-950 dark:text-blue-200 mt-0.5 leading-relaxed italic">
                             WHERE filters individual rows BEFORE grouping. HAVING filters aggregated bucket results AFTER grouping.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. SCHEMA & SAMPLE DATA CELL -->
-            <div id="nb-schema-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center">
-                            <i data-lucide="database" class="w-4 h-4 text-blue-600"></i>
-                        </div>
-                        <h2 class="text-xs sm:text-sm font-bold text-slate-900">Database Schema & Sample Records</h2>
-                    </div>
-                    <span class="text-xs text-slate-500 font-mono" id="nb-table-count">1 Table</span>
-                </div>
+            <!-- SMART TABBED NAVIGATION BAR (Fixes mobile wall-of-text fatigue!) -->
+            <div class="sticky top-14 z-20 bg-slate-100/90 dark:bg-[#0b0f19]/90 backdrop-blur-md py-2 -mx-3 px-3 sm:-mx-6 sm:px-6 border-y border-slate-200/80 dark:border-slate-800">
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                    <!-- Tab: Queries & Solutions -->
+                    <button onclick="switchTab('queries')" data-tab="queries" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
+                        <i data-lucide="terminal" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400"></i>
+                        <span id="tab-label-queries">Queries</span>
+                        <span id="tab-badge-queries" class="badge px-1.5 py-0.2 rounded-full text-[10px] bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-mono">5</span>
+                    </button>
 
-                <div id="nb-schema-content" class="space-y-4">
-                    <!-- Schema tables rendered here -->
+                    <!-- Tab: Tables & Insert Values -->
+                    <button onclick="switchTab('tables')" data-tab="tables" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
+                        <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+                        <span>Tables & Inserts</span>
+                        <span id="tab-badge-tables" class="badge px-1.5 py-0.2 rounded-full text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-mono">1</span>
+                    </button>
+
+                    <!-- Tab: Interactive Sandbox -->
+                    <button onclick="switchTab('practice')" data-tab="practice" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
+                        <i data-lucide="play" class="w-3.5 h-3.5 text-amber-500"></i>
+                        <span>Sandbox</span>
+                    </button>
+
+                    <!-- Tab: Viva Prep -->
+                    <button onclick="switchTab('viva')" data-tab="viva" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
+                        <i data-lucide="award" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400"></i>
+                        <span>Viva Prep</span>
+                        <span id="tab-badge-viva" class="badge px-1.5 py-0.2 rounded-full text-[10px] bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 font-mono">3</span>
+                    </button>
+
+                    <!-- Tab: Ask AI -->
+                    <button onclick="switchTab('discussion')" data-tab="discussion" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131c2e] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#1e293b] whitespace-nowrap shadow-2xs active:scale-95">
+                        <i data-lucide="message-square" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400"></i>
+                        <span>Ask AI</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    </button>
+
+                    <!-- Tab: View All (For users who prefer single scroll) -->
+                    <button onclick="switchTab('all')" data-tab="all" class="tab-btn px-2.5 py-1.5 rounded-lg text-xs font-medium border border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 whitespace-nowrap active:scale-95 ml-auto">
+                        <span>All</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- 3. LAB QUERIES & SOLUTIONS CELL -->
-            <div id="nb-queries-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-4 sm:space-y-5">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <!-- SECTION: LAB QUERIES & SOLUTIONS CELL (Default Primary Tab) -->
+            <div id="nb-queries-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center">
-                            <i data-lucide="terminal" class="w-4 h-4 text-blue-600"></i>
+                        <div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/70 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                            <i data-lucide="terminal" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <h2 class="text-xs sm:text-sm font-bold text-slate-900" id="nb-queries-title">Queries & Official Solutions</h2>
-                            <p class="text-[11px] sm:text-xs text-slate-500">Official syntax and logic from the syllabus lab record.</p>
+                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white" id="nb-queries-title">Queries & Official Solutions</h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Official syntax and logic from the syllabus lab record.</p>
                         </div>
                     </div>
-                    <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200" id="nb-queries-count">
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#0f172a] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono" id="nb-queries-count">
                         5 Queries
                     </span>
                 </div>
 
-                <div id="nb-queries-content" class="space-y-5 sm:space-y-6">
+                <div id="nb-queries-content" class="space-y-4 sm:space-y-5">
                     <!-- Queries or PL/SQL blocks rendered here -->
                 </div>
             </div>
 
-            <!-- 4. INTERACTIVE SQL PRACTICE SCRATCHPAD CELL -->
-            <div id="nb-practice-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-3.5 sm:space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <!-- SECTION: SCHEMA & INSERT TEST DATA CELL -->
+            <div id="nb-schema-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100 dark:border-slate-800">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                            <i data-lucide="database" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Database Schemas & Insert Queries</h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Complete CREATE TABLE DDL and INSERT statements to set up your database.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 self-start sm:self-auto">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-mono" id="nb-table-count">1 Table</span>
+                        <button onclick="copyAllSetupSql(this)" class="text-xs bg-blue-600 hover:bg-blue-700 text-white font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-xs active:scale-95 transition-all" title="Copy all CREATE TABLE and INSERT statements for this lab">
+                            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                            <span class="whitespace-nowrap">Copy All Setup SQL</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="nb-schema-content" class="space-y-4">
+                    <!-- Schema tables with INSERT values rendered here -->
+                </div>
+            </div>
+
+            <!-- SECTION: INTERACTIVE SQL PRACTICE SCRATCHPAD CELL -->
+            <div id="nb-practice-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-3.5 sm:space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/70 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                             <i data-lucide="play" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <h2 class="text-xs sm:text-sm font-bold text-slate-900">Interactive Scratchpad & Code Doctor</h2>
-                            <p class="text-[11px] sm:text-xs text-slate-500">Type or paste your query attempt below. Thangan will evaluate it against the syllabus.</p>
+                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Interactive Sandbox & Code Doctor</h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Type or paste your query attempt below. Thangan will evaluate it against the syllabus.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Select Question to Practice -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Select Exercise to Solve:</label>
-                    <select id="nb-practice-select" onchange="onNotebookPracticeSelectChange(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Select Exercise to Solve:</label>
+                    <select id="nb-practice-select" onchange="onNotebookPracticeSelectChange(this.value)" class="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-[#131c2e] transition-colors">
                         <!-- Populated by JS -->
                     </select>
                 </div>
@@ -334,9 +508,8 @@
                     <textarea 
                         id="nb-practice-input" 
                         rows="4" 
-                        class="w-full bg-[#1e2433] border border-slate-700 rounded-lg p-3 sm:p-3.5 font-mono text-[11px] sm:text-xs text-blue-100 focus:outline-none focus:border-blue-500 leading-relaxed placeholder-slate-500"
-                        placeholder="-- Write your SQL solution here...
-SELECT * FROM ..."
+                        class="w-full bg-[#0a0e17] border border-slate-800 rounded-lg p-3 sm:p-3.5 font-mono text-[11px] sm:text-xs text-blue-100 focus:outline-none focus:border-blue-500 leading-relaxed placeholder-slate-500"
+                        placeholder="-- Write your SQL solution here...&#10;SELECT * FROM ..."
                     ></textarea>
                 </div>
 
@@ -347,31 +520,31 @@ SELECT * FROM ..."
                             <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
                             <span>Check with Thangan</span>
                         </button>
-                        <button onclick="loadPracticeSolution()" class="flex-1 sm:flex-initial bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-medium px-3 py-2 rounded-lg active:scale-95 transition-all">
+                        <button onclick="loadPracticeSolution()" class="flex-1 sm:flex-initial bg-white dark:bg-[#131c2e] hover:bg-slate-50 dark:hover:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium px-3 py-2 rounded-lg active:scale-95 transition-all">
                             <span>Reveal Solution</span>
                         </button>
                     </div>
-                    <button onclick="clearPracticeInput()" class="text-xs text-slate-400 hover:text-slate-600 px-2 py-1 ml-auto">
+                    <button onclick="clearPracticeInput()" class="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-2 py-1 ml-auto">
                         Clear
                     </button>
                 </div>
 
                 <!-- Doctor Feedback Box -->
-                <div id="nb-practice-feedback" class="hidden mt-3 p-3.5 sm:p-4 rounded-lg border border-slate-200 bg-slate-50 text-xs">
+                <div id="nb-practice-feedback" class="hidden mt-3 p-3.5 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0f172a] text-xs">
                     <!-- Populated by JS -->
                 </div>
             </div>
 
-            <!-- 5. VIVA VOCE FLASHCARDS CELL -->
+            <!-- SECTION: VIVA VOCE FLASHCARDS CELL -->
             <div id="nb-viva-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <div class="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/70 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                             <i data-lucide="award" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <h2 class="text-xs sm:text-sm font-bold text-slate-900">University Viva Voce Preparation</h2>
-                            <p class="text-[11px] sm:text-xs text-slate-500">Official oral examination questions asked on this experiment.</p>
+                            <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">University Viva Voce Preparation</h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Official oral examination questions frequently asked on this experiment.</p>
                         </div>
                     </div>
                 </div>
@@ -381,27 +554,27 @@ SELECT * FROM ..."
                 </div>
             </div>
 
-            <!-- 6. INLINE NOTEBOOK DISCUSSION WITH PROFESSOR THANGAN -->
+            <!-- SECTION: INLINE NOTEBOOK DISCUSSION WITH PROFESSOR THANGAN -->
             <div id="nb-discussion-section" class="notebook-cell p-4 sm:p-6 md:p-7 space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                     <div class="flex items-center gap-2 sm:gap-2.5">
-                        <div class="w-8 h-8 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center text-xs shrink-0">
+                        <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-xs">
                             T
                         </div>
                         <div>
                             <div class="flex items-center gap-1.5">
-                                <h2 class="text-xs sm:text-sm font-bold text-slate-900">Notebook Discussion with Professor Thangan</h2>
-                                <span class="w-2 h-2 rounded-full bg-emerald-500" title="Free AI Online"></span>
+                                <h2 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Discussion with Professor Thangan</h2>
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Free AI Online"></span>
                             </div>
-                            <p class="text-[11px] sm:text-xs text-slate-500">Ask any doubt about this lab. 100% Free & Unlimited.</p>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Ask any doubt about this lab. 100% Free & Unlimited.</p>
                         </div>
                     </div>
                     
                     <div class="flex items-center gap-1">
-                        <button onclick="toggleVoiceSpeech()" id="nb-voice-toggle" class="p-1.5 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors" title="Toggle audio speech">
+                        <button onclick="toggleVoiceSpeech()" id="nb-voice-toggle" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors" title="Toggle audio speech">
                             <i data-lucide="volume-2" class="w-4 h-4"></i>
                         </button>
-                        <button onclick="clearDiscussionThread()" class="p-1.5 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors" title="Clear discussion">
+                        <button onclick="clearDiscussionThread()" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors" title="Clear discussion">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -413,17 +586,8 @@ SELECT * FROM ..."
                 </div>
 
                 <!-- Discussion Messages Feed -->
-                <div id="nb-discussion-feed" class="space-y-3.5 pt-2 max-h-[480px] sm:max-h-[500px] overflow-y-auto">
-                    <!-- Initial Greeting -->
-                    <div class="flex gap-2.5 sm:gap-3">
-                        <div class="w-7 h-7 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                            T
-                        </div>
-                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs text-slate-700 leading-relaxed max-w-[92%]">
-                            <p class="font-semibold text-slate-900 mb-1">Hello! I'm Professor Thangan.</p>
-                            <p>I have the entire 61-page lab manual loaded. Have a doubt about a query, constraint, or PL/SQL trigger? Ask me below or pick one of the prompts above!</p>
-                        </div>
-                    </div>
+                <div id="nb-discussion-feed" class="space-y-3 pt-1 max-h-[440px] sm:max-h-[500px] overflow-y-auto">
+                    <!-- Dynamic messages -->
                 </div>
 
                 <!-- Discussion Input Form -->
@@ -433,87 +597,92 @@ SELECT * FROM ..."
                             type="text" 
                             id="nb-discussion-input" 
                             placeholder="Ask Professor Thangan any question about this lab..." 
-                            class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 sm:px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
+                            class="flex-1 bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-xl px-3 sm:px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-[#131c2e] transition-colors"
                             autocomplete="off"
                         >
                         <button 
                             type="submit" 
                             id="nb-discussion-submit" 
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 sm:px-4 py-2.5 rounded-lg font-medium text-xs flex items-center justify-center shadow-sm active:scale-95 transition-all shrink-0"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 sm:px-4 py-2.5 rounded-xl font-medium text-xs flex items-center justify-center shadow-sm active:scale-95 transition-all shrink-0"
                             aria-label="Send Message"
                         >
                             <i data-lucide="send" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] text-slate-400 mt-2 px-1">
-                        <span class="truncate">⚡ 100% Free & Unlimited AI • Zero API Keys</span>
-                        <button type="button" onclick="openSettingsModal()" class="text-blue-600 hover:underline shrink-0 ml-2">Settings</button>
+                    <div class="flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500 mt-2 px-1">
+                        <span class="truncate">⚡ 100% Free AI • Zero API Keys Required</span>
+                        <button type="button" onclick="openSettingsModal()" class="text-blue-600 dark:text-blue-400 hover:underline shrink-0 ml-2">Settings</button>
                     </div>
                 </form>
             </div>
 
-            <!-- Notebook Footer & Creator Details (College name removed) -->
-            <footer class="border-t border-slate-200/80 pt-8 pb-4 text-center space-y-4">
+            <!-- Notebook Footer & Creator Details -->
+            <footer class="border-t border-slate-200 dark:border-slate-800 pt-6 pb-4 text-center space-y-3">
                 <div>
-                    <p class="text-sm font-semibold text-slate-800">DBMS Lab Interactive Notebook</p>
-                    <p class="text-xs text-slate-500 mt-0.5">Complete Syllabus Guide • All 14 SQL & PL/SQL Programs</p>
+                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-200">DBMS Lab Interactive Notebook</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Complete Syllabus Guide • All 14 SQL & PL/SQL Programs with INSERT values</p>
                 </div>
 
                 <!-- Creator Details Card -->
-                <div class="inline-flex flex-col sm:flex-row items-center gap-3 px-4 py-3 rounded-xl bg-white border border-slate-200 shadow-xs max-w-full">
-                    <div class="flex items-center gap-2 text-xs text-slate-700 font-medium">
+                <div class="inline-flex flex-col sm:flex-row items-center gap-3 px-4 py-2.5 rounded-xl bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 shadow-xs max-w-full">
+                    <div class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span>Created by <strong class="text-slate-900 font-semibold">Adi</strong></span>
+                        <span>Created by <strong class="text-slate-900 dark:text-white font-semibold">Adi</strong></span>
                     </div>
-                    <div class="h-3 w-[1px] bg-slate-200 hidden sm:block"></div>
+                    <div class="h-3 w-[1px] bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
                     <div class="flex items-center gap-2 flex-wrap justify-center">
                         <!-- Instagram -->
-                        <a href="https://instagram.com/adi_cazz__7" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-pink-700 text-xs font-semibold border border-pink-200 transition-all hover:scale-105 active:scale-95 shadow-2xs" title="Instagram: @adi_cazz__7">
+                        <a href="https://instagram.com/adi_cazz__7" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-50 dark:bg-pink-950/40 hover:bg-pink-100 dark:hover:bg-pink-900/60 text-pink-700 dark:text-pink-300 text-xs font-semibold border border-pink-200 dark:border-pink-800/60 transition-all hover:scale-105 active:scale-95 shadow-2xs" title="Instagram: @adi_cazz__7">
                             <svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                             <span>@adi_cazz__7</span>
                         </a>
 
                         <!-- GitHub -->
-                        <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold border border-slate-300 transition-all hover:scale-105 active:scale-95 shadow-2xs" title="GitHub: @code-by-adi7">
+                        <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#1e293b] hover:bg-slate-200 dark:hover:bg-[#28354f] text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-300 dark:border-slate-700 transition-all hover:scale-105 active:scale-95 shadow-2xs" title="GitHub: @code-by-adi7">
                             <svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                             <span>code-by-adi7</span>
                         </a>
                     </div>
                 </div>
 
-                <p class="text-[11px] text-slate-400">All 14 Programs • Prepared with Professor Thangan</p>
+                <p class="text-[11px] text-slate-400 dark:text-slate-500">All 14 Programs • Prepared with Professor Thangan</p>
             </footer>
 
         </div>
     </main>
 
-    <!-- MOBILE BOTTOM NAVIGATION (Docked Thumb Bar for Phones & Small Tablets) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-xl safe-bottom">
-        <div class="grid grid-cols-5 h-14 max-w-lg mx-auto text-[10px] font-medium text-slate-600">
-            <button onclick="toggleTOCModal()" class="flex flex-col items-center justify-center gap-1 hover:text-blue-600 active:scale-90 transition-transform">
-                <i data-lucide="book-open" class="w-4 h-4 text-slate-600"></i>
+    <!-- MOBILE BOTTOM NAVIGATION (Docked App Navigation with Direct Tab Switching) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0b0f19]/95 backdrop-blur-md border-t border-slate-200/90 dark:border-slate-800 shadow-xl safe-bottom transition-colors">
+        <div class="grid grid-cols-5 h-14 max-w-lg mx-auto text-[10px] font-medium text-slate-600 dark:text-slate-400">
+            <!-- 1. Index Modal Button -->
+            <button onclick="toggleTOCModal()" class="flex flex-col items-center justify-center gap-1 active:scale-90 transition-transform">
+                <i data-lucide="book-open" class="w-4 h-4"></i>
                 <span>Index</span>
             </button>
 
-            <button onclick="showConceptsModal()" class="flex flex-col items-center justify-center gap-1 hover:text-blue-600 active:scale-90 transition-transform">
-                <i data-lucide="bookmark" class="w-4 h-4 text-slate-600"></i>
-                <span>Theory</span>
+            <!-- 2. Queries Tab Button -->
+            <button onclick="switchTab('queries')" data-mobtab="queries" class="mob-nav-btn flex flex-col items-center justify-center gap-1 text-blue-600 dark:text-blue-400 font-bold active:scale-90 transition-all">
+                <i data-lucide="terminal" class="w-4 h-4"></i>
+                <span id="mob-label-queries">Queries</span>
             </button>
 
-            <button onclick="scrollToPractice()" class="flex flex-col items-center justify-center gap-1 hover:text-blue-600 active:scale-90 transition-transform">
-                <i data-lucide="terminal" class="w-4 h-4 text-slate-600"></i>
-                <span>Practice</span>
+            <!-- 3. Tables & Inserts Tab Button -->
+            <button onclick="switchTab('tables')" data-mobtab="tables" class="mob-nav-btn flex flex-col items-center justify-center gap-1 active:scale-90 transition-all">
+                <i data-lucide="database" class="w-4 h-4"></i>
+                <span>Tables</span>
             </button>
 
-            <button onclick="scrollToViva()" class="flex flex-col items-center justify-center gap-1 hover:text-blue-600 active:scale-90 transition-transform">
-                <i data-lucide="award" class="w-4 h-4 text-slate-600"></i>
-                <span>Viva</span>
+            <!-- 4. Sandbox Practice Tab Button -->
+            <button onclick="switchTab('practice')" data-mobtab="practice" class="mob-nav-btn flex flex-col items-center justify-center gap-1 active:scale-90 transition-all">
+                <i data-lucide="play" class="w-4 h-4"></i>
+                <span>Sandbox</span>
             </button>
 
-            <button onclick="scrollToDiscussion()" class="flex flex-col items-center justify-center gap-1 text-blue-600 hover:text-blue-700 active:scale-90 transition-transform font-semibold">
+            <!-- 5. Ask AI Tab Button -->
+            <button onclick="switchTab('discussion')" data-mobtab="discussion" class="mob-nav-btn flex flex-col items-center justify-center gap-1 active:scale-90 transition-all">
                 <div class="relative">
-                    <i data-lucide="message-square" class="w-4 h-4 text-blue-600"></i>
-                    <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                    <span class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 </div>
                 <span>Ask AI</span>
             </button>
@@ -521,24 +690,24 @@ SELECT * FROM ..."
     </nav>
 
     <!-- TABLE OF CONTENTS (INDEX) MODAL -->
-    <div id="toc-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/40 backdrop-blur-xs p-0 sm:p-4 transition-all">
-        <div class="bg-white border-t sm:border border-slate-200 rounded-t-2xl sm:rounded-xl w-full max-w-xl max-h-[90vh] sm:max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+    <div id="toc-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-xs p-0 sm:p-4 transition-all">
+        <div class="bg-white dark:bg-[#131c2e] border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-xl max-h-[90vh] sm:max-h-[85vh] flex flex-col shadow-2xl overflow-hidden transition-colors">
             <!-- Header -->
-            <div class="p-3.5 sm:p-4 border-b border-slate-200 flex items-center justify-between">
+            <div class="p-3.5 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                        <i data-lucide="book-open" class="w-4 h-4 text-blue-600"></i>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                         <span>Lab Notebook Index</span>
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Jump directly to any of the 14 lab exercises.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Jump directly to any of the 14 lab exercises.</p>
                 </div>
-                <button onclick="toggleTOCModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Close Index">
+                <button onclick="toggleTOCModal()" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-colors" aria-label="Close Index">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <!-- Search -->
-            <div class="p-3 border-b border-slate-100 bg-slate-50">
+            <div class="p-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#0f172a]">
                 <div class="relative">
                     <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
                     <input 
@@ -546,7 +715,7 @@ SELECT * FROM ..."
                         id="toc-search" 
                         oninput="filterTOC(this.value)" 
                         placeholder="Search queries, tables, or topics..." 
-                        class="w-full bg-white border border-slate-200 rounded-md pl-8 pr-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                        class="w-full bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-blue-500"
                     >
                 </div>
             </div>
@@ -559,158 +728,356 @@ SELECT * FROM ..."
     </div>
 
     <!-- CORE CONCEPTS CHEATSHEET MODAL -->
-    <div id="concepts-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/40 backdrop-blur-xs p-0 sm:p-4 transition-all">
-        <div class="bg-white border-t sm:border border-slate-200 rounded-t-2xl sm:rounded-xl w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
-            <div class="p-3.5 sm:p-4 border-b border-slate-200 flex items-center justify-between">
+    <div id="concepts-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-xs p-0 sm:p-4 transition-all">
+        <div class="bg-white dark:bg-[#131c2e] border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col shadow-2xl overflow-hidden transition-colors">
+            <div class="p-3.5 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                        <i data-lucide="bookmark" class="w-4 h-4 text-blue-600"></i>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i data-lucide="bookmark" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                         <span>DBMS Core Concepts Cheatsheet</span>
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Key theoretical topics & syntax patterns tested by examiners.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Key theoretical topics & syntax patterns tested by examiners.</p>
                 </div>
-                <button onclick="closeConceptsModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Close Cheatsheet">
+                <button onclick="closeConceptsModal()" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-colors" aria-label="Close Cheatsheet">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
-            <div id="concepts-list-container" class="p-3 sm:p-4 overflow-y-auto space-y-3 flex-1 bg-slate-50">
+            <div id="concepts-list-container" class="p-3 sm:p-4 overflow-y-auto space-y-3 flex-1 bg-slate-50 dark:bg-[#0b0f19]">
                 <!-- Populated by JS -->
             </div>
         </div>
     </div>
 
     <!-- PROVIDER & SETTINGS MODAL -->
-    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/40 backdrop-blur-xs p-0 sm:p-4 transition-all">
-        <div class="bg-white border-t sm:border border-slate-200 rounded-t-2xl sm:rounded-xl w-full max-w-md max-h-[92vh] overflow-y-auto p-4 sm:p-5 shadow-2xl space-y-4">
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-200">
-                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    <i data-lucide="settings" class="w-4 h-4 text-blue-600"></i>
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-xs p-0 sm:p-4 transition-all">
+        <div class="bg-white dark:bg-[#131c2e] border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-md max-h-[92vh] overflow-y-auto p-4 sm:p-5 shadow-2xl space-y-4 transition-colors">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="settings" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                     <span>Tutor Settings</span>
                 </h3>
-                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Close Settings">
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-colors" aria-label="Close Settings">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
-            <div class="space-y-2.5">
-                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">AI Provider for Professor Thangan:</label>
+            <!-- Appearance Theme Setting -->
+            <div class="space-y-2">
+                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Appearance Theme:</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="applyTheme('light')" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0f172a] hover:border-blue-500 text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="sun" class="w-4 h-4 text-amber-500"></i>
+                        <span>Light Theme</span>
+                    </button>
+                    <button type="button" onclick="applyTheme('dark')" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0f172a] hover:border-blue-500 text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="moon" class="w-4 h-4 text-blue-400"></i>
+                        <span>Dark Theme</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Provider Setting -->
+            <div class="space-y-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">AI Engine for Professor Thangan:</label>
                 
-                <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-blue-200 bg-blue-50/50 cursor-pointer">
+                <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/40 cursor-pointer">
                     <input type="radio" name="ai_provider" value="free_cloud" checked class="mt-0.5 text-blue-600 focus:ring-0">
                     <div>
-                        <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                        <div class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                             <span>Free Cloud AI (Pollinations.ai)</span>
-                            <span class="text-[9px] bg-emerald-100 text-emerald-800 px-1 py-0.2 rounded font-semibold uppercase">Default</span>
+                            <span class="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-1.5 py-0.2 rounded font-semibold uppercase">Default</span>
                         </div>
-                        <p class="text-[11px] text-slate-600 mt-0.5">100% Free, Unlimited, no API key required. High quality OpenAI/Llama models.</p>
+                        <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">100% Free, Unlimited, no API key required. High quality OpenAI/Llama models.</p>
                     </div>
                 </label>
 
-                <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer">
+                <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] hover:bg-slate-50 dark:hover:bg-[#18243c] cursor-pointer">
                     <input type="radio" name="ai_provider" value="offline" class="mt-0.5 text-blue-600 focus:ring-0">
                     <div>
-                        <div class="text-xs font-bold text-slate-900">Built-in Offline Knowledge Engine</div>
-                        <p class="text-[11px] text-slate-500 mt-0.5">100% Offline! Runs without internet using pre-programmed lab syllabus logic.</p>
+                        <div class="text-xs font-bold text-slate-900 dark:text-white">Built-in Offline Knowledge Engine</div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">100% Offline! Runs without internet using pre-programmed lab syllabus logic.</p>
                     </div>
                 </label>
 
-                <label class="flex items-start gap-2.5 p-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer">
+                <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] hover:bg-slate-50 dark:hover:bg-[#18243c] cursor-pointer">
                     <input type="radio" name="ai_provider" value="gemini" class="mt-0.5 text-blue-600 focus:ring-0">
                     <div>
-                        <div class="text-xs font-bold text-slate-900">Custom Google Gemini API</div>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Use your personal Gemini API Key if desired.</p>
+                        <div class="text-xs font-bold text-slate-900 dark:text-white">Custom Google Gemini API</div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Use your personal Gemini API Key if desired.</p>
                     </div>
                 </label>
             </div>
 
             <div id="api-key-container" class="hidden pt-1">
-                <label class="block text-xs font-medium text-slate-700 mb-1">Enter Gemini API Key:</label>
+                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Enter Gemini API Key:</label>
                 <input 
                     type="password" 
                     id="custom-api-key-input" 
                     placeholder="AIzaSy..." 
-                    class="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+                    class="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500"
                 >
             </div>
 
             <!-- About Creator Details in Settings Modal -->
-            <div class="pt-3 border-t border-slate-200 space-y-2">
-                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">About Creator</div>
-                <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+            <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">About Creator</div>
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                     <div>
-                        <div class="text-xs font-bold text-slate-900">Adi</div>
-                        <div class="text-[11px] text-slate-500">Instagram: @adi_cazz__7</div>
+                        <div class="text-xs font-bold text-slate-900 dark:text-white">Adi</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400">Instagram: @adi_cazz__7</div>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <a href="https://instagram.com/adi_cazz__7" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-md bg-white border border-slate-200 text-pink-600 hover:bg-pink-50" title="Instagram: @adi_cazz__7">
+                        <a href="https://instagram.com/adi_cazz__7" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-pink-600 hover:bg-pink-50" title="Instagram: @adi_cazz__7">
                             <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                         </a>
-                        <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-md bg-white border border-slate-200 text-slate-800 hover:bg-slate-100" title="GitHub: code-by-adi7">
+                        <a href="https://github.com/code-by-adi7" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-100" title="GitHub: code-by-adi7">
                             <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                         </a>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200">
-                <button onclick="closeSettingsModal()" class="px-3 py-1.5 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900">Cancel</button>
-                <button onclick="saveProviderSettings()" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white">Save</button>
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                <button onclick="closeSettingsModal()" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">Cancel</button>
+                <button onclick="saveProviderSettings()" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white">Save</button>
             </div>
         </div>
     </div>
 
     <!-- JAVASCRIPT NOTEBOOK CONTROLLER -->
     <script>
-        // State
+        // Global Application State
         let activeProgramId = 'A1';
+        let activeTab = 'queries'; // 'queries' | 'tables' | 'practice' | 'viva' | 'discussion' | 'all'
         let voiceEnabled = false;
 
         document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
             initNotebook();
         });
 
-        function initNotebook() {
-            populateHeaderDropdown();
-            renderTOCList();
-            loadProgramIntoNotebook(activeProgramId);
-            initSettingsState();
+        // ==========================================
+        // 1. THEME MANAGEMENT (DARK / LIGHT)
+        // ==========================================
+        function initTheme() {
+            const savedTheme = localStorage.getItem('dbms_theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            applyTheme(theme);
+        }
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.body.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.body.classList.remove('dark');
+            }
+            localStorage.setItem('dbms_theme', theme);
+            updateThemeIcon(theme);
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            applyTheme(isDark ? 'light' : 'dark');
+        }
+
+        function updateThemeIcon(theme) {
+            const btn = document.getElementById('theme-toggle-btn');
+            if (!btn) return;
+            if (theme === 'dark') {
+                btn.innerHTML = `<i data-lucide="sun" class="w-4 h-4 text-amber-400"></i>`;
+                btn.setAttribute('title', 'Switch to Light Mode');
+            } else {
+                btn.innerHTML = `<i data-lucide="moon" class="w-4 h-4 text-slate-600"></i>`;
+                btn.setAttribute('title', 'Switch to Dark Mode');
+            }
             lucide.createIcons();
         }
 
-        // Header & Mobile Program Dropdowns
-        function populateHeaderDropdown() {
-            const selects = [
-                document.getElementById('header-program-select'),
-                document.getElementById('mobile-program-select')
-            ].filter(Boolean);
+        // ==========================================
+        // 2. NOTEBOOK INITIALIZATION
+        // ==========================================
+        function initNotebook() {
+            initProgramDropdown();
+            renderTOCList();
+            loadProgramIntoNotebook(activeProgramId);
+            initSettingsState();
+            switchTab('queries'); // Default to Queries tab
+            lucide.createIcons();
+        }
 
-            selects.forEach(select => {
-                select.innerHTML = '';
+        // ==========================================
+        // 3. TAB NAVIGATION (Fixes mobile wall-of-text!)
+        // ==========================================
+        function switchTab(tabName) {
+            activeTab = tabName;
+            const sections = {
+                'queries': document.getElementById('nb-queries-section'),
+                'tables': document.getElementById('nb-schema-section'),
+                'practice': document.getElementById('nb-practice-section'),
+                'viva': document.getElementById('nb-viva-section'),
+                'discussion': document.getElementById('nb-discussion-section')
+            };
 
-                const groupA = document.createElement('optgroup');
-                groupA.label = "Part A: SQL Queries";
+            // Update Desktop/Header Tab Buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                const t = btn.dataset.tab;
+                if (t === tabName) {
+                    btn.classList.add('tab-active');
+                } else {
+                    btn.classList.remove('tab-active');
+                }
+            });
 
-                const groupB = document.createElement('optgroup');
-                groupB.label = "Part B: PL/SQL Programs";
+            // Update Mobile Bottom Bar Buttons
+            document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+                const t = btn.dataset.mobtab;
+                if (t === tabName) {
+                    btn.classList.add('text-blue-600', 'dark:text-blue-400', 'font-bold');
+                    btn.classList.remove('text-slate-600', 'dark:text-slate-400');
+                } else {
+                    btn.classList.remove('text-blue-600', 'dark:text-blue-400', 'font-bold');
+                    btn.classList.add('text-slate-600', 'dark:text-slate-400');
+                }
+            });
 
-                DBMS_PROGRAMS.forEach(p => {
-                    const opt = document.createElement('option');
-                    opt.value = p.id;
-                    opt.textContent = `${p.id}: ${p.title}`;
-                    if (p.id.startsWith('A')) {
-                        groupA.appendChild(opt);
-                    } else {
-                        groupB.appendChild(opt);
+            // Show/Hide Sections cleanly
+            if (tabName === 'all') {
+                Object.values(sections).forEach(s => s && s.classList.remove('hidden'));
+            } else {
+                Object.entries(sections).forEach(([key, sec]) => {
+                    if (sec) {
+                        if (key === tabName) {
+                            sec.classList.remove('hidden');
+                        } else {
+                            sec.classList.add('hidden');
+                        }
                     }
                 });
+            }
 
-                select.appendChild(groupA);
-                select.appendChild(groupB);
+            // Smooth scroll up when switching tabs
+            const mainContainer = document.querySelector('main');
+            if (mainContainer) {
+                mainContainer.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // ==========================================
+        // 4. PROGRAM NAVIGATION & CUSTOM DROPDOWN
+        // ==========================================
+        function initProgramDropdown() {
+            renderCustomProgramDropdown();
+
+            // Click outside to close custom dropdown
+            document.addEventListener('click', (e) => {
+                const wrapper = document.getElementById('header-switcher-wrapper');
+                if (wrapper && !wrapper.contains(e.target)) {
+                    closeProgramDropdown();
+                }
+            });
+
+            // Escape key to close
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeProgramDropdown();
+                }
             });
         }
 
-        function onProgramSelectChange(progId) {
-            loadProgramIntoNotebook(progId);
+        function toggleProgramDropdown() {
+            const menu = document.getElementById('program-dropdown-menu');
+            const arrow = document.getElementById('header-prog-arrow');
+            if (!menu) return;
+            const isHidden = menu.classList.contains('hidden');
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+                const searchInput = document.getElementById('header-prog-search');
+                if (searchInput) {
+                    searchInput.value = '';
+                    filterHeaderDropdown('');
+                    setTimeout(() => searchInput.focus(), 60);
+                }
+            } else {
+                closeProgramDropdown();
+            }
+        }
+
+        function closeProgramDropdown() {
+            const menu = document.getElementById('program-dropdown-menu');
+            const arrow = document.getElementById('header-prog-arrow');
+            if (menu) menu.classList.add('hidden');
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
+        }
+
+        function renderCustomProgramDropdown() {
+            const container = document.getElementById('header-dropdown-items-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const partA = DBMS_PROGRAMS.filter(p => p.id.startsWith('A'));
+            const partB = DBMS_PROGRAMS.filter(p => p.id.startsWith('B'));
+
+            // Part A Section
+            const secA = document.createElement('div');
+            secA.className = "header-prog-group";
+            secA.innerHTML = `<div class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Part A: SQL Queries (1–7)</div><div class="space-y-0.5" id="header-part-a-items"></div>`;
+            container.appendChild(secA);
+            const listA = secA.querySelector('#header-part-a-items');
+            partA.forEach(p => listA.appendChild(createDropdownItem(p)));
+
+            // Part B Section
+            const secB = document.createElement('div');
+            secB.className = "header-prog-group pt-1.5";
+            secB.innerHTML = `<div class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Part B: PL/SQL Programs (1–7)</div><div class="space-y-0.5" id="header-part-b-items"></div>`;
+            container.appendChild(secB);
+            const listB = secB.querySelector('#header-part-b-items');
+            partB.forEach(p => listB.appendChild(createDropdownItem(p)));
+            lucide.createIcons();
+        }
+
+        function createDropdownItem(prog) {
+            const isCurrent = prog.id === activeProgramId;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `w-full text-left px-2.5 py-2 rounded-xl flex items-center justify-between gap-2.5 transition-colors cursor-pointer header-dropdown-item ${
+                isCurrent 
+                    ? 'bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800' 
+                    : 'hover:bg-slate-100 dark:hover:bg-[#18243c] text-slate-700 dark:text-slate-200'
+            }`;
+            btn.dataset.progId = prog.id;
+            btn.dataset.search = `${prog.id} ${prog.title} ${prog.description}`.toLowerCase();
+
+            btn.innerHTML = `
+                <div class="flex items-center gap-2 truncate">
+                    <span class="w-6 h-6 rounded-md ${isCurrent ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-[#070a12] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'} font-mono font-bold text-[11px] flex items-center justify-center shrink-0">
+                        ${prog.id}
+                    </span>
+                    <div class="truncate">
+                        <div class="text-xs truncate ${isCurrent ? 'font-bold text-blue-700 dark:text-blue-300' : 'font-medium text-slate-900 dark:text-white'}">${escapeHtml(prog.title)}</div>
+                    </div>
+                </div>
+                ${isCurrent ? `<i data-lucide="check" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0"></i>` : ''}
+            `;
+
+            btn.onclick = () => {
+                closeProgramDropdown();
+                loadProgramIntoNotebook(prog.id);
+            };
+
+            return btn;
+        }
+
+        function filterHeaderDropdown(query) {
+            const q = query.trim().toLowerCase();
+            const items = document.querySelectorAll('.header-dropdown-item');
+            items.forEach(it => {
+                const text = it.dataset.search || '';
+                it.style.display = text.includes(q) ? 'flex' : 'none';
+            });
         }
 
         function navigateToPreviousProgram() {
@@ -727,20 +1094,30 @@ SELECT * FROM ..."
             }
         }
 
-        // Main Program Loader
+        // ==========================================
+        // 5. MAIN PROGRAM LOADER
+        // ==========================================
         function loadProgramIntoNotebook(progId) {
             activeProgramId = progId;
-            window.aiTutor.selectedProgramId = progId;
+            if (window.aiTutor) {
+                window.aiTutor.selectedProgramId = progId;
+            }
 
             const prog = DBMS_PROGRAMS.find(p => p.id === progId) || DBMS_PROGRAMS[0];
             const idx = DBMS_PROGRAMS.findIndex(p => p.id === progId);
 
-            // Update Both Desktop & Mobile Dropdowns
-            const headerSelect = document.getElementById('header-program-select');
-            if (headerSelect) headerSelect.value = progId;
+            // Update Both Desktop & Mobile Dropdown labels
+            const badge = document.getElementById('header-prog-badge');
+            if (badge) badge.textContent = prog.id;
+            const title = document.getElementById('header-prog-title');
+            if (title) title.textContent = prog.title;
 
-            const mobileSelect = document.getElementById('mobile-program-select');
-            if (mobileSelect) mobileSelect.value = progId;
+            const mobBadge = document.getElementById('mobile-prog-badge');
+            if (mobBadge) mobBadge.textContent = prog.id;
+            const mobTitle = document.getElementById('mobile-prog-title');
+            if (mobTitle) mobTitle.textContent = prog.title;
+
+            renderCustomProgramDropdown();
 
             const isFirst = (idx === 0);
             const isLast = (idx === DBMS_PROGRAMS.length - 1);
@@ -766,27 +1143,48 @@ SELECT * FROM ..."
             // Render Concept Badges
             renderConceptsPills(prog);
 
-            // 2. Schema Cell
+            // Update Tab Badges
+            const qCount = prog.queries ? prog.queries.length : (prog.plsql ? 1 : 0);
+            const tCount = prog.tables ? prog.tables.length : 0;
+            const vCount = prog.vivaQuestions ? prog.vivaQuestions.length : 3;
+
+            const tabBadgeQ = document.getElementById('tab-badge-queries');
+            if (tabBadgeQ) tabBadgeQ.textContent = qCount;
+            const tabLabelQ = document.getElementById('tab-label-queries');
+            if (tabLabelQ) tabLabelQ.textContent = prog.queries ? 'Queries' : 'PL/SQL Script';
+
+            const mobLabelQ = document.getElementById('mob-label-queries');
+            if (mobLabelQ) mobLabelQ.textContent = prog.queries ? 'Queries' : 'PL/SQL';
+
+            const tabBadgeT = document.getElementById('tab-badge-tables');
+            if (tabBadgeT) tabBadgeT.textContent = tCount;
+
+            const tabBadgeV = document.getElementById('tab-badge-viva');
+            if (tabBadgeV) tabBadgeV.textContent = vCount;
+
+            // 2. Render Schema Cell (With complete INSERT values)
             renderSchemaCell(prog);
 
-            // 3. Queries Cell
+            // 3. Render Queries Cell
             renderQueriesCell(prog);
 
-            // 4. Practice Scratchpad
+            // 4. Render Practice Scratchpad
             renderPracticeSelect(prog);
             clearPracticeFeedback();
 
-            // 5. Viva Voce
+            // 5. Render Viva Voce
             renderVivaCell(prog);
 
             // 6. Discussion Prompts
             renderDiscussionChips(prog);
-
-            // Reset discussion feed greeting for new chapter
             resetDiscussionGreeting(prog);
 
-            // Scroll to top smoothly
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Switch to appropriate tab or maintain active tab
+            if (activeTab === 'tables' && tCount === 0) {
+                switchTab('queries');
+            } else {
+                switchTab(activeTab);
+            }
 
             lucide.createIcons();
         }
@@ -798,7 +1196,7 @@ SELECT * FROM ..."
             const concepts = prog.concepts || ['SQL', 'Oracle', 'RDBMS'];
             concepts.forEach(c => {
                 const pill = document.createElement('button');
-                pill.className = "px-2.5 py-1 rounded-full text-[11px] font-mono bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors active:scale-95 shadow-2xs";
+                pill.className = "px-2.5 py-1 rounded-full text-[11px] font-mono bg-slate-100 dark:bg-[#18243c] hover:bg-slate-200 dark:hover:bg-[#203050] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-colors active:scale-95 shadow-2xs";
                 pill.textContent = `#${c}`;
                 pill.onclick = () => {
                     askThanganAboutQueryTopic(c);
@@ -807,7 +1205,9 @@ SELECT * FROM ..."
             });
         }
 
-        // Render Schema
+        // ==========================================
+        // 6. RENDER SCHEMAS & COMPLETE INSERT STATEMENTS
+        // ==========================================
         function renderSchemaCell(prog) {
             const container = document.getElementById('nb-schema-content');
             const countLabel = document.getElementById('nb-table-count');
@@ -816,9 +1216,9 @@ SELECT * FROM ..."
             if (!prog.tables || prog.tables.length === 0) {
                 countLabel.textContent = "Algorithm Lab";
                 container.innerHTML = `
-                    <div class="p-3.5 sm:p-4 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 flex items-start gap-2.5">
-                        <i data-lucide="info" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
-                        <p>This experiment focuses on mathematical and algorithmic PL/SQL subprograms (procedures, functions, and recursive routines) without an underlying database table.</p>
+                    <div class="p-4 bg-slate-50 dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 flex items-start gap-2.5">
+                        <i data-lucide="info" class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5"></i>
+                        <p>This experiment focuses on mathematical and algorithmic PL/SQL subprograms (procedures, functions, and packages) without an underlying database table.</p>
                     </div>
                 `;
                 return;
@@ -826,64 +1226,161 @@ SELECT * FROM ..."
 
             countLabel.textContent = `${prog.tables.length} Table${prog.tables.length > 1 ? 's' : ''}`;
 
-            prog.tables.forEach(t => {
+            prog.tables.forEach((t, idx) => {
+                const tableId = `tbl_${t.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${idx}`;
                 const card = document.createElement('div');
-                card.className = "space-y-3 p-3.5 sm:p-4 bg-slate-50/70 rounded-lg border border-slate-200";
+                card.className = "space-y-3.5 p-3.5 sm:p-5 bg-slate-50/80 dark:bg-[#0f172a]/90 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors";
+
+                // Ensure clean insertSql is available
+                const insertSqlContent = t.insertSql || '-- No insert queries required for this table';
 
                 card.innerHTML = `
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-1.5 sm:gap-2 truncate">
-                            <span class="text-xs font-bold text-slate-900 font-mono">${escapeHtml(t.name)}</span>
-                            <span class="text-[11px] text-slate-500 hidden sm:inline">(${escapeHtml(t.columns)})</span>
+                    <!-- Table Title & Column Summary & Quick Copy Action Buttons -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-slate-200 dark:border-slate-800">
+                        <div class="flex items-center gap-2 truncate">
+                            <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                            <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-mono tracking-tight">${escapeHtml(t.name)}</span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-mono truncate hidden sm:inline">(${escapeHtml(t.columns)})</span>
                         </div>
-                        <button onclick="copyToClipboard(this, \`${escapeJsString(t.createSql)}\`)" class="text-xs bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded-md border border-slate-200 flex items-center gap-1 transition-colors active:scale-95 shadow-2xs shrink-0">
-                            <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-500"></i>
-                            <span class="text-[11px]">Copy DDL</span>
+                        <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
+                            <!-- Direct 1-Click Copy Inserts -->
+                            <button onclick="copyToClipboard(this, \`${escapeJsString(insertSqlContent)}\`)" class="text-xs bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 px-2.5 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800 flex items-center gap-1 transition-all active:scale-95 shadow-2xs font-medium" title="Copy INSERT queries for this table">
+                                <i data-lucide="arrow-down-to-line" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+                                <span class="text-[11px]">Copy Inserts</span>
+                            </button>
+                            <!-- Direct 1-Click Copy DDL -->
+                            <button onclick="copyToClipboard(this, \`${escapeJsString(t.createSql)}\`)" class="text-xs bg-white dark:bg-[#131c2e] hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-700 dark:text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center gap-1 transition-all active:scale-95 shadow-2xs" title="Copy CREATE TABLE SQL">
+                                <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400"></i>
+                                <span class="text-[11px]">Copy DDL</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Compact Sub-Tabs for this Table: INSERT SQL / CREATE TABLE / Sample Data (Fixes screen overflow!) -->
+                    <div class="flex items-center gap-1 bg-slate-200/70 dark:bg-[#070a12] p-1 rounded-lg text-xs border border-slate-200 dark:border-slate-800 overflow-x-auto no-scrollbar">
+                        <button onclick="switchTableSubView('${tableId}', 'insert')" id="subtab-${tableId}-insert" class="table-subtab-btn flex-1 py-1 px-2.5 rounded-md text-[11px] font-semibold transition-all flex items-center justify-center gap-1 shadow-xs bg-white dark:bg-[#131c2e] text-blue-600 dark:text-blue-400">
+                            <i data-lucide="arrow-down-to-line" class="w-3 h-3"></i>
+                            <span>INSERT Queries</span>
                         </button>
+                        <button onclick="switchTableSubView('${tableId}', 'create')" id="subtab-${tableId}-create" class="table-subtab-btn flex-1 py-1 px-2.5 rounded-md text-[11px] font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all flex items-center justify-center gap-1">
+                            <i data-lucide="file-code-2" class="w-3 h-3"></i>
+                            <span>CREATE TABLE</span>
+                        </button>
+                        ${t.sampleRecords && t.sampleRecords.length > 0 ? `
+                        <button onclick="switchTableSubView('${tableId}', 'preview')" id="subtab-${tableId}-preview" class="table-subtab-btn flex-1 py-1 px-2.5 rounded-md text-[11px] font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all flex items-center justify-center gap-1">
+                            <i data-lucide="table" class="w-3 h-3"></i>
+                            <span>Preview (${t.sampleRecords.length} rows)</span>
+                        </button>
+                        ` : ''}
                     </div>
 
-                    <div class="code-container p-3 sm:p-3.5 overflow-x-auto text-[11px] sm:text-xs">
-                        <pre><code>${escapeHtml(t.createSql)}</code></pre>
-                    </div>
-                `;
-
-                // If sample data exists, render clean responsive table view
-                if (t.sampleRecords && t.sampleRecords.length > 0) {
-                    const preview = document.createElement('div');
-                    preview.className = "pt-2";
-                    preview.innerHTML = `
-                        <div class="text-[11px] font-semibold text-slate-600 mb-1.5 flex items-center justify-between">
-                            <div class="flex items-center gap-1.5">
-                                <span>Sample Table Records:</span>
-                                <span class="sm:hidden text-[10px] text-blue-600 font-normal">👈 Swipe table 👉</span>
-                            </div>
-                            <span class="font-normal text-slate-400 font-mono">${t.sampleRecords.length} rows</span>
+                    <!-- 1. INSERT SQL STATEMENTS VIEW -->
+                    <div id="view-${tableId}-insert" class="table-subview space-y-1.5">
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-0.5">
+                            <span class="font-medium">SQL INSERT statements for ${escapeHtml(t.name)}:</span>
+                            <button onclick="copyToClipboard(this, \`${escapeJsString(insertSqlContent)}\`)" class="text-blue-600 dark:text-blue-400 hover:underline">Copy Insert SQL</button>
                         </div>
-                        <div class="overflow-x-auto border border-slate-200 rounded-md bg-white -mx-0.5 sm:mx-0 shadow-2xs">
-                            <table class="w-full text-xs text-left min-w-[340px]">
-                                <thead class="bg-slate-100/90 text-slate-700 uppercase font-semibold text-[10px]">
+                        <div class="code-container p-3 sm:p-3.5 overflow-x-auto text-[11px] sm:text-xs">
+                            <pre><code>${escapeHtml(insertSqlContent)}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- 2. CREATE TABLE DDL VIEW -->
+                    <div id="view-${tableId}-create" class="table-subview hidden space-y-1.5">
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-0.5">
+                            <span class="font-medium">Table Definition & Constraints:</span>
+                            <button onclick="copyToClipboard(this, \`${escapeJsString(t.createSql)}\`)" class="text-blue-600 dark:text-blue-400 hover:underline">Copy DDL</button>
+                        </div>
+                        <div class="code-container p-3 sm:p-3.5 overflow-x-auto text-[11px] sm:text-xs">
+                            <pre><code>${escapeHtml(t.createSql)}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- 3. SAMPLE RECORDS TABLE VIEW -->
+                    ${t.sampleRecords && t.sampleRecords.length > 0 ? `
+                    <div id="view-${tableId}-preview" class="table-subview hidden space-y-1.5">
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-0.5">
+                            <div class="flex items-center gap-1.5">
+                                <span>Rendered Table Records:</span>
+                                <span class="sm:hidden text-[10px] text-blue-600 dark:text-blue-400">👈 Swipe table 👉</span>
+                            </div>
+                            <span class="font-mono">${t.sampleRecords.length} rows</span>
+                        </div>
+                        <div class="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-[#070a12] shadow-2xs">
+                            <table class="w-full text-xs text-left min-w-[320px]">
+                                <thead class="bg-slate-100 dark:bg-[#18243c] text-slate-700 dark:text-slate-300 uppercase font-semibold text-[10px]">
                                     <tr>
-                                        ${Object.keys(t.sampleRecords[0]).map(k => `<th class="px-2.5 py-1.5 border-b border-slate-200 whitespace-nowrap">${escapeHtml(k)}</th>`).join('')}
+                                        ${Object.keys(t.sampleRecords[0]).map(k => `<th class="px-3 py-2 border-b border-slate-200 dark:border-slate-800 whitespace-nowrap">${escapeHtml(k)}</th>`).join('')}
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100">
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/80">
                                     ${t.sampleRecords.map(r => `
-                                        <tr class="hover:bg-slate-50/80">
-                                            ${Object.values(r).map(v => `<td class="px-2.5 py-1.5 font-mono text-[11px] sm:text-xs text-slate-700 whitespace-nowrap">${escapeHtml(String(v))}</td>`).join('')}
+                                        <tr class="hover:bg-slate-50/80 dark:hover:bg-[#131c2e]">
+                                            ${Object.values(r).map(v => `<td class="px-3 py-2 font-mono text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 whitespace-nowrap">${escapeHtml(String(v))}</td>`).join('')}
                                         </tr>
                                     `).join('')}
                                 </tbody>
                             </table>
                         </div>
-                    `;
-                    card.appendChild(preview);
-                }
+                    </div>
+                    ` : ''}
+                `;
 
                 container.appendChild(card);
             });
         }
 
-        // Render Queries
+        // Switch Sub-View inside a Table Card (INSERT / CREATE / PREVIEW)
+        function switchTableSubView(tableId, viewType) {
+            const types = ['insert', 'create', 'preview'];
+            types.forEach(type => {
+                const view = document.getElementById(`view-${tableId}-${type}`);
+                const btn = document.getElementById(`subtab-${tableId}-${type}`);
+                if (view) {
+                    if (type === viewType) {
+                        view.classList.remove('hidden');
+                    } else {
+                        view.classList.add('hidden');
+                    }
+                }
+                if (btn) {
+                    if (type === viewType) {
+                        btn.className = "table-subtab-btn flex-1 py-1 px-2.5 rounded-md text-[11px] font-semibold transition-all flex items-center justify-center gap-1 shadow-xs bg-white dark:bg-[#131c2e] text-blue-600 dark:text-blue-400";
+                    } else {
+                        btn.className = "table-subtab-btn flex-1 py-1 px-2.5 rounded-md text-[11px] font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all flex items-center justify-center gap-1";
+                    }
+                }
+            });
+            lucide.createIcons();
+        }
+
+        // 1-Click Copy All Setup SQL for current lab (DDL + INSERTs)
+        function copyAllSetupSql(btn) {
+            const prog = DBMS_PROGRAMS.find(p => p.id === activeProgramId);
+            if (!prog || !prog.tables || prog.tables.length === 0) return;
+
+            let fullSql = `-- ========================================================\n`;
+            fullSql += `-- Setup Script for ${prog.id}: ${prog.title}\n`;
+            fullSql += `-- Complete DDL (CREATE TABLE) and DML (INSERT Statements)\n`;
+            fullSql += `-- ========================================================\n\n`;
+
+            prog.tables.forEach(t => {
+                fullSql += `-- Table: ${t.name}\n`;
+                if (t.createSql) {
+                    fullSql += `${t.createSql}\n\n`;
+                }
+                if (t.insertSql) {
+                    fullSql += `${t.insertSql}\n\n`;
+                }
+            });
+
+            fullSql += `COMMIT;\n`;
+            copyToClipboard(btn, fullSql);
+        }
+
+        // ==========================================
+        // 7. RENDER QUERIES & SOLUTIONS CELL
+        // ==========================================
         function renderQueriesCell(prog) {
             const container = document.getElementById('nb-queries-content');
             const countBadge = document.getElementById('nb-queries-count');
@@ -896,26 +1393,26 @@ SELECT * FROM ..."
 
                 prog.queries.forEach((q, idx) => {
                     const block = document.createElement('div');
-                    block.className = "space-y-3 pb-5 border-b border-slate-100 last:border-b-0 last:pb-0";
+                    block.className = "space-y-3 pb-5 border-b border-slate-100 dark:border-slate-800 last:border-b-0 last:pb-0";
 
-                    // Header row: Query letter & Question prompt & Actions
+                    // Header: Query Letter & Question Prompt & Copy/Ask Actions
                     const header = document.createElement('div');
                     header.className = "flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-3";
                     header.innerHTML = `
                         <div class="flex items-start gap-2 sm:gap-2.5 flex-1 min-w-0">
-                            <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-mono font-bold text-xs border border-blue-200 shrink-0 mt-0.5">
+                            <span class="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 font-mono font-bold text-xs border border-blue-200 dark:border-blue-900 shrink-0 mt-0.5">
                                 ${escapeHtml(q.label)}
                             </span>
-                            <h3 class="text-xs sm:text-sm font-semibold text-slate-900 leading-snug">
+                            <h3 class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white leading-snug">
                                 ${escapeHtml(q.question)}
                             </h3>
                         </div>
                         <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-start">
-                            <button onclick="copyToClipboard(this, \`${escapeJsString(q.sql)}\`)" class="text-xs bg-slate-50 hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded-md border border-slate-200 flex items-center gap-1 transition-colors shadow-2xs active:scale-95" title="Copy SQL">
-                                <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <button onclick="copyToClipboard(this, \`${escapeJsString(q.sql)}\`)" class="text-xs bg-slate-50 dark:bg-[#0f172a] hover:bg-slate-100 dark:hover:bg-[#18243c] text-slate-700 dark:text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center gap-1 transition-colors shadow-2xs active:scale-95" title="Copy SQL">
+                                <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400"></i>
                                 <span class="text-[11px] sm:text-xs">Copy</span>
                             </button>
-                            <button onclick="askThanganAboutSpecificQuery('${prog.id}', '${q.label}')" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-md border border-blue-100 transition-colors flex items-center gap-1 active:scale-95" title="Ask Professor Thangan">
+                            <button onclick="askThanganAboutSpecificQuery('${prog.id}', '${escapeJsString(q.label)}')" class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg border border-blue-100 dark:border-blue-900 transition-colors flex items-center gap-1 active:scale-95" title="Ask Professor Thangan">
                                 <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
                                 <span class="text-[11px] sm:text-xs font-medium">Ask Thangan</span>
                             </button>
@@ -929,24 +1426,24 @@ SELECT * FROM ..."
                     code.innerHTML = `<pre><code>${escapeHtml(q.sql)}</code></pre>`;
                     block.appendChild(code);
 
-                    // Inline Thangan's Explanation (Collapsible)
+                    // Collapsible Logic Breakdown (Collapsed by default to keep phone view clean!)
                     const breakdown = document.createElement('details');
-                    breakdown.className = "bg-slate-50/80 border border-slate-200 rounded-lg p-3 text-xs";
+                    breakdown.className = "bg-slate-50/80 dark:bg-[#0f172a]/90 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs";
                     breakdown.innerHTML = `
-                        <summary class="cursor-pointer font-semibold text-blue-700 select-none flex items-center gap-1.5">
-                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <summary class="cursor-pointer font-semibold text-blue-700 dark:text-blue-400 select-none flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400"></i>
                             <span>💡 Thangan's Logic Breakdown</span>
                         </summary>
-                        <div class="mt-2.5 space-y-2 text-slate-600 leading-relaxed pl-3.5 sm:pl-5 border-l-2 border-blue-200">
-                            <p><strong class="text-slate-800">Why this works:</strong> ${escapeHtml(q.explanation)}</p>
+                        <div class="mt-2.5 space-y-2 text-slate-600 dark:text-slate-300 leading-relaxed pl-3.5 sm:pl-5 border-l-2 border-blue-200 dark:border-blue-800">
+                            <p><strong class="text-slate-800 dark:text-white">Why this works:</strong> ${escapeHtml(q.explanation)}</p>
                             ${q.keyPoints && q.keyPoints.length > 0 ? `
                                 <div class="flex flex-wrap gap-1.5 pt-1">
-                                    ${q.keyPoints.map(kp => `<span class="bg-white border border-slate-200 text-slate-700 px-2 py-0.5 rounded text-[11px]">• ${escapeHtml(kp)}</span>`).join('')}
+                                    ${q.keyPoints.map(kp => `<span class="bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded text-[11px]">• ${escapeHtml(kp)}</span>`).join('')}
                                 </div>
                             ` : ''}
                             ${q.output ? `
-                                <p class="text-[11px] text-slate-500 pt-1">
-                                    <strong>Expected Output:</strong> <span class="font-mono text-slate-800">${escapeHtml(q.output)}</span>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 pt-1">
+                                    <strong>Expected Output:</strong> <span class="font-mono text-slate-800 dark:text-slate-200">${escapeHtml(q.output)}</span>
                                 </p>
                             ` : ''}
                         </div>
@@ -964,14 +1461,14 @@ SELECT * FROM ..."
 
                 block.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <span class="text-xs font-semibold text-slate-700">Complete Source Code:</span>
+                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">Complete PL/SQL Source Code:</span>
                         <div class="flex items-center gap-1.5">
-                            <button onclick="copyToClipboard(this, \`${escapeJsString(prog.plsql)}\`)" class="text-xs bg-slate-50 hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded-md border border-slate-200 flex items-center gap-1 transition-colors shadow-2xs active:scale-95">
-                                <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <button onclick="copyToClipboard(this, \`${escapeJsString(prog.plsql)}\`)" class="text-xs bg-slate-50 dark:bg-[#0f172a] hover:bg-slate-100 dark:hover:bg-[#18243c] text-slate-700 dark:text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center gap-1 transition-colors shadow-2xs active:scale-95">
+                                <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400"></i>
                                 <span>Copy Code</span>
                             </button>
-                            <button onclick="askThanganToTeachPLSQL('${prog.id}')" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 px-2.5 py-1.5 rounded-md border border-blue-200 flex items-center gap-1 transition-colors active:scale-95">
-                                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-600"></i>
+                            <button onclick="askThanganToTeachPLSQL('${prog.id}')" class="text-xs bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 text-blue-700 dark:text-blue-300 px-2.5 py-1.5 rounded-lg border border-blue-200 dark:border-blue-900 flex items-center gap-1 transition-colors active:scale-95">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400"></i>
                                 <span>Explain with Thangan</span>
                             </button>
                         </div>
@@ -984,7 +1481,9 @@ SELECT * FROM ..."
             }
         }
 
-        // Render Practice Select
+        // ==========================================
+        // 8. PRACTICE SCRATCHPAD & CODE DOCTOR
+        // ==========================================
         function renderPracticeSelect(prog) {
             const select = document.getElementById('nb-practice-select');
             select.innerHTML = '';
@@ -1046,7 +1545,7 @@ SELECT * FROM ..."
             const feedbackBox = document.getElementById('nb-practice-feedback');
             feedbackBox.classList.remove('hidden');
             feedbackBox.innerHTML = `
-                <div class="flex items-center gap-2.5 text-blue-700 font-medium py-1">
+                <div class="flex items-center gap-2.5 text-blue-700 dark:text-blue-400 font-medium py-1">
                     <div class="w-3.5 h-3.5 rounded-full border-2 border-blue-600 border-t-transparent animate-spin"></div>
                     <span>Professor Thangan is analyzing your SQL syntax and logic against the syllabus...</span>
                 </div>
@@ -1058,19 +1557,21 @@ SELECT * FROM ..."
             try {
                 const res = await window.aiTutor.ask(prompt);
                 feedbackBox.innerHTML = `
-                    <div class="ai-markdown text-slate-800">
+                    <div class="ai-markdown text-slate-800 dark:text-slate-200">
                         ${marked.parse(res)}
                     </div>
                 `;
             } catch (err) {
                 feedbackBox.innerHTML = `
-                    <p class="text-rose-600 font-medium">Evaluation error: ${escapeHtml(err.message)}</p>
+                    <p class="text-rose-600 dark:text-rose-400 font-medium">Evaluation error: ${escapeHtml(err.message)}</p>
                 `;
             }
             lucide.createIcons();
         }
 
-        // Render Viva Voce Cell
+        // ==========================================
+        // 9. VIVA VOCE FLASHCARDS
+        // ==========================================
         function renderVivaCell(prog) {
             const container = document.getElementById('nb-viva-list');
             container.innerHTML = '';
@@ -1078,21 +1579,21 @@ SELECT * FROM ..."
             const questions = prog.vivaQuestions || VIVA_BANK.slice(0, 3);
             questions.forEach((vq, i) => {
                 const item = document.createElement('div');
-                item.className = "p-3.5 bg-slate-50/70 border border-slate-200 rounded-lg space-y-2";
+                item.className = "p-3.5 bg-slate-50/80 dark:bg-[#0f172a]/90 border border-slate-200 dark:border-slate-800 rounded-xl space-y-2";
 
                 item.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-3">
-                        <h4 class="text-xs font-semibold text-slate-900 leading-snug">
-                            <span class="text-emerald-700 font-bold mr-1">Q${i+1}.</span> ${escapeHtml(vq.q)}
+                        <h4 class="text-xs font-semibold text-slate-900 dark:text-white leading-snug">
+                            <span class="text-emerald-700 dark:text-emerald-400 font-bold mr-1">Q${i+1}.</span> ${escapeHtml(vq.q)}
                         </h4>
-                        <button onclick="askThanganVivaQuestion(\`${escapeJsString(vq.q)}\`)" class="text-[11px] bg-white hover:bg-slate-100 text-blue-600 px-2.5 py-1.5 rounded-md border border-slate-200 font-medium transition-colors shrink-0 self-start active:scale-95 shadow-2xs">
+                        <button onclick="askThanganVivaQuestion(\`${escapeJsString(vq.q)}\`)" class="text-[11px] bg-white dark:bg-[#131c2e] hover:bg-slate-100 dark:hover:bg-[#1e293b] text-blue-600 dark:text-blue-400 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 font-medium transition-colors shrink-0 self-start active:scale-95 shadow-2xs">
                             Oral Exam Prep
                         </button>
                     </div>
 
-                    <details class="text-xs text-slate-700 bg-white p-2.5 rounded-md border border-slate-200">
-                        <summary class="cursor-pointer text-blue-600 font-medium select-none">Reveal Examiner Model Answer</summary>
-                        <p class="mt-1.5 text-slate-600 leading-relaxed">${escapeHtml(vq.a || vq.modelAnswer)}</p>
+                    <details class="text-xs text-slate-700 dark:text-slate-300 bg-white dark:bg-[#131c2e] p-2.5 rounded-lg border border-slate-200 dark:border-slate-800">
+                        <summary class="cursor-pointer text-blue-600 dark:text-blue-400 font-medium select-none">Reveal Examiner Model Answer</summary>
+                        <p class="mt-1.5 text-slate-600 dark:text-slate-300 leading-relaxed">${escapeHtml(vq.a || vq.modelAnswer)}</p>
                     </details>
                 `;
 
@@ -1100,7 +1601,9 @@ SELECT * FROM ..."
             });
         }
 
-        // Render Discussion Chips (Horizontal Swipe on Mobile)
+        // ==========================================
+        // 10. AI TUTOR DISCUSSION SECTION
+        // ==========================================
         function renderDiscussionChips(prog) {
             const container = document.getElementById('nb-discussion-chips');
             container.innerHTML = '';
@@ -1114,7 +1617,7 @@ SELECT * FROM ..."
 
             chips.forEach(chipText => {
                 const btn = document.createElement('button');
-                btn.className = "text-[11px] bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-full whitespace-nowrap transition-colors shrink-0 shadow-2xs active:scale-95";
+                btn.className = "text-[11px] bg-slate-100 dark:bg-[#18243c] hover:bg-slate-200 dark:hover:bg-[#223352] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-full whitespace-nowrap transition-colors shrink-0 shadow-2xs active:scale-95";
                 btn.textContent = chipText;
                 btn.onclick = () => {
                     document.getElementById('nb-discussion-input').value = chipText;
@@ -1127,20 +1630,21 @@ SELECT * FROM ..."
         function resetDiscussionGreeting(prog) {
             const feed = document.getElementById('nb-discussion-feed');
             feed.innerHTML = `
-                <div class="flex gap-3">
-                    <div class="w-7 h-7 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                <div class="flex gap-2.5 sm:gap-3">
+                    <div class="w-7 h-7 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                         T
                     </div>
-                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs text-slate-700 leading-relaxed max-w-[92%]">
-                        <p class="font-semibold text-slate-900 mb-1">Loaded: ${escapeHtml(prog.id)} — ${escapeHtml(prog.title)}</p>
-                        <p>I'm ready to teach the complete code, explain constraints, or simulate your oral viva exam. What would you like to explore?</p>
+                    <div class="bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs text-slate-700 dark:text-slate-300 leading-relaxed max-w-[92%]">
+                        <p class="font-semibold text-slate-900 dark:text-white mb-1">Loaded: ${escapeHtml(prog.id)} — ${escapeHtml(prog.title)}</p>
+                        <p>I have the entire 61-page lab manual loaded. Have a doubt about query syntax, table constraints, or oral viva questions? Ask me below or pick one of the quick prompts!</p>
                     </div>
                 </div>
             `;
-            window.aiTutor.conversationHistory = [];
+            if (window.aiTutor) {
+                window.aiTutor.conversationHistory = [];
+            }
         }
 
-        // Discussion Message Handling
         async function handleNotebookDiscussionSubmit(e) {
             e.preventDefault();
             const input = document.getElementById('nb-discussion-input');
@@ -1172,26 +1676,26 @@ SELECT * FROM ..."
             if (role === 'user') {
                 row.className = "flex justify-end";
                 row.innerHTML = `
-                    <div class="bg-blue-600 rounded-lg p-2.5 px-3 max-w-[85%] text-xs text-white shadow-sm leading-relaxed">
+                    <div class="bg-blue-600 rounded-xl p-2.5 px-3.5 max-w-[85%] text-xs text-white shadow-sm leading-relaxed">
                         ${escapeHtml(content)}
                     </div>
                 `;
             } else {
-                row.className = "flex gap-3";
+                row.className = "flex gap-2.5 sm:gap-3";
                 const rendered = marked.parse(content);
                 row.innerHTML = `
-                    <div class="w-7 h-7 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                    <div class="w-7 h-7 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                         T
                     </div>
-                    <div class="bg-white border border-slate-200 rounded-lg p-3 max-w-[92%] text-xs text-slate-800 ai-markdown shadow-sm">
+                    <div class="bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 rounded-xl p-3 max-w-[92%] text-xs text-slate-800 dark:text-slate-200 ai-markdown shadow-sm">
                         ${rendered}
-                        <div class="flex items-center gap-2 mt-2 pt-2 border-t border-slate-100 text-[10px] text-slate-400">
-                            <button onclick="window.aiTutor.speak(\`${escapeJsString(content)}\`)" class="hover:text-blue-600 flex items-center gap-1">
-                                <i data-lucide="volume-2" class="w-3 h-3 text-blue-600"></i>
+                        <div class="flex items-center gap-2 mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
+                            <button onclick="window.aiTutor.speak(\`${escapeJsString(content)}\`)" class="hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1">
+                                <i data-lucide="volume-2" class="w-3 h-3 text-blue-600 dark:text-blue-400"></i>
                                 <span>Listen</span>
                             </button>
                             <span>•</span>
-                            <button onclick="copyToClipboard(this, \`${escapeJsString(content)}\`)" class="hover:text-blue-600 flex items-center gap-1">
+                            <button onclick="copyToClipboard(this, \`${escapeJsString(content)}\`)" class="hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1">
                                 <i data-lucide="copy" class="w-3 h-3"></i>
                                 <span>Copy</span>
                             </button>
@@ -1210,12 +1714,12 @@ SELECT * FROM ..."
             const id = 'typing-' + Date.now();
             const div = document.createElement('div');
             div.id = id;
-            div.className = "flex gap-3";
+            div.className = "flex gap-2.5 sm:gap-3";
             div.innerHTML = `
-                <div class="w-7 h-7 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                <div class="w-7 h-7 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                     T
                 </div>
-                <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 flex items-center gap-1.5 shadow-sm">
+                <div class="bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 flex items-center gap-1.5 shadow-sm">
                     <div class="w-1.5 h-1.5 bg-blue-600 rounded-full typing-dot"></div>
                     <div class="w-1.5 h-1.5 bg-blue-600 rounded-full typing-dot"></div>
                     <div class="w-1.5 h-1.5 bg-blue-600 rounded-full typing-dot"></div>
@@ -1241,74 +1745,47 @@ SELECT * FROM ..."
             voiceEnabled = !voiceEnabled;
             const btn = document.getElementById('nb-voice-toggle');
             if (voiceEnabled) {
-                btn.className = "p-1.5 rounded bg-blue-600 text-white transition-colors";
+                btn.className = "p-1.5 rounded-lg bg-blue-600 text-white transition-colors";
                 btn.title = "Voice Speech: Active";
             } else {
-                btn.className = "p-1.5 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors";
+                btn.className = "p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors";
                 btn.title = "Voice Speech: Disabled";
                 window.aiTutor.stopSpeaking();
             }
         }
 
-        // Quick Contextual Triggers & Scroll Helpers
-        function scrollToPractice() {
-            const el = document.getElementById('nb-practice-section');
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                setTimeout(() => {
-                    const input = document.getElementById('nb-practice-input');
-                    if (input) input.focus();
-                }, 350);
-            }
-        }
-
-        function scrollToViva() {
-            const el = document.getElementById('nb-viva-section');
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
-
-        function scrollToDiscussion() {
-            const el = document.getElementById('nb-discussion-section');
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                setTimeout(() => {
-                    const input = document.getElementById('nb-discussion-input');
-                    if (input) input.focus();
-                }, 350);
-            }
-        }
-
+        // Contextual Quick Ask Functions
         function askThanganAboutSpecificQuery(progId, queryLabel) {
-            scrollToDiscussion();
+            switchTab('discussion');
             window.aiTutor.setMode('explainer');
             document.getElementById('nb-discussion-input').value = `Thangan, explain ${queryLabel} from Program ${progId} line-by-line and show why the clauses are ordered this way.`;
             handleNotebookDiscussionSubmit(new Event('submit'));
         }
 
         function askThanganToTeachPLSQL(progId) {
-            scrollToDiscussion();
+            switchTab('discussion');
             window.aiTutor.setMode('explainer');
             document.getElementById('nb-discussion-input').value = `Thangan, teach me the complete PL/SQL program for ${progId} step-by-step.`;
             handleNotebookDiscussionSubmit(new Event('submit'));
         }
 
         function askThanganVivaQuestion(questionText) {
-            scrollToDiscussion();
+            switchTab('discussion');
             window.aiTutor.setMode('viva');
             document.getElementById('nb-discussion-input').value = `Thangan, examine me on this viva question: "${questionText}".`;
             handleNotebookDiscussionSubmit(new Event('submit'));
         }
 
         function askThanganAboutQueryTopic(topic) {
-            scrollToDiscussion();
+            switchTab('discussion');
             window.aiTutor.setMode('tutor');
             document.getElementById('nb-discussion-input').value = `Thangan, explain how "${topic}" is applied in ${activeProgramId}.`;
             handleNotebookDiscussionSubmit(new Event('submit'));
         }
 
-        // Table of Contents (TOC) Modal
+        // ==========================================
+        // 11. TABLE OF CONTENTS (TOC) MODAL
+        // ==========================================
         function toggleTOCModal() {
             const modal = document.getElementById('toc-modal');
             modal.classList.toggle('hidden');
@@ -1327,7 +1804,7 @@ SELECT * FROM ..."
             // Part A Group
             const groupA = document.createElement('div');
             groupA.innerHTML = `
-                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Part A: SQL Lab Queries (1–7)</div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Part A: SQL Lab Queries (1–7)</div>
                 <div class="space-y-1" id="toc-part-a"></div>
             `;
             container.appendChild(groupA);
@@ -1341,7 +1818,7 @@ SELECT * FROM ..."
             // Part B Group
             const groupB = document.createElement('div');
             groupB.innerHTML = `
-                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 pt-2">Part B: PL/SQL Programs (1–7)</div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 pt-2">Part B: PL/SQL Programs (1–7)</div>
                 <div class="space-y-1" id="toc-part-b"></div>
             `;
             container.appendChild(groupB);
@@ -1355,7 +1832,7 @@ SELECT * FROM ..."
 
         function createTOCItem(prog) {
             const btn = document.createElement('button');
-            btn.className = "w-full text-left p-2.5 rounded-lg flex items-center justify-between hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200 toc-item";
+            btn.className = "w-full text-left p-2.5 rounded-xl flex items-center justify-between hover:bg-slate-100 dark:hover:bg-[#18243c] transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700 toc-item";
             btn.onclick = () => {
                 toggleTOCModal();
                 loadProgramIntoNotebook(prog.id);
@@ -1363,12 +1840,12 @@ SELECT * FROM ..."
 
             btn.innerHTML = `
                 <div class="flex items-center gap-2.5 truncate">
-                    <span class="w-6 h-6 rounded bg-slate-100 text-slate-700 font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                    <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-[#070a12] text-slate-700 dark:text-slate-300 font-mono font-bold text-xs flex items-center justify-center shrink-0 border border-slate-200 dark:border-slate-800">
                         ${prog.id}
                     </span>
                     <div class="truncate">
-                        <div class="text-xs font-semibold text-slate-900 truncate">${escapeHtml(prog.title)}</div>
-                        <div class="text-[11px] text-slate-500 truncate">${escapeHtml(prog.description)}</div>
+                        <div class="text-xs font-semibold text-slate-900 dark:text-white truncate">${escapeHtml(prog.title)}</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${escapeHtml(prog.description)}</div>
                     </div>
                 </div>
                 <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
@@ -1385,7 +1862,9 @@ SELECT * FROM ..."
             });
         }
 
-        // Concepts Modal
+        // ==========================================
+        // 12. CONCEPTS CHEATSHEET MODAL
+        // ==========================================
         function showConceptsModal() {
             const modal = document.getElementById('concepts-modal');
             const container = document.getElementById('concepts-list-container');
@@ -1393,20 +1872,20 @@ SELECT * FROM ..."
 
             for (const [key, c] of Object.entries(DBMS_CONCEPTS)) {
                 const card = document.createElement('div');
-                card.className = "bg-white border border-slate-200 rounded-lg p-3.5 space-y-1.5 shadow-sm";
+                card.className = "bg-white dark:bg-[#131c2e] border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 space-y-1.5 shadow-xs";
 
                 card.innerHTML = `
                     <div class="flex items-center justify-between">
-                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">${escapeHtml(c.title)}</h4>
-                        <button onclick="askThanganAboutCheatsheetConcept('${escapeJsString(key)}')" class="text-[11px] text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors">
+                        <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">${escapeHtml(c.title)}</h4>
+                        <button onclick="askThanganAboutCheatsheetConcept('${escapeJsString(key)}')" class="text-[11px] text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900 px-2 py-0.5 rounded-md hover:bg-blue-100 transition-colors">
                             Ask Thangan
                         </button>
                     </div>
-                    <p class="text-xs text-slate-600 leading-relaxed">${escapeHtml(c.description)}</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${escapeHtml(c.description)}</p>
                     <div class="code-container p-2 text-[11px] overflow-x-auto">
                         <pre><code>${escapeHtml(c.example)}</code></pre>
                     </div>
-                    <p class="text-[11px] text-slate-500">💡 <strong>Examiner Tip:</strong> ${escapeHtml(c.examTip)}</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">💡 <strong>Examiner Tip:</strong> ${escapeHtml(c.examTip)}</p>
                 `;
 
                 container.appendChild(card);
@@ -1422,13 +1901,15 @@ SELECT * FROM ..."
 
         function askThanganAboutCheatsheetConcept(key) {
             closeConceptsModal();
-            scrollToDiscussion();
+            switchTab('discussion');
             window.aiTutor.setMode('tutor');
             document.getElementById('nb-discussion-input').value = `Thangan, explain the concept "${key}" in depth with examples from my lab record.`;
             handleNotebookDiscussionSubmit(new Event('submit'));
         }
 
-        // Settings Modal
+        // ==========================================
+        // 13. SETTINGS & PROVIDER MODAL
+        // ==========================================
         function openSettingsModal() {
             document.getElementById('settings-modal').classList.remove('hidden');
         }
@@ -1465,11 +1946,13 @@ SELECT * FROM ..."
             alert('Settings updated successfully!');
         }
 
-        // Helpers
+        // ==========================================
+        // 14. HELPERS
+        // ==========================================
         function copyToClipboard(btn, text) {
             navigator.clipboard.writeText(text);
             const original = btn.innerHTML;
-            btn.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-emerald-600"></i><span class="text-emerald-700 font-medium">Copied!</span>`;
+            btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i><span class="text-emerald-700 dark:text-emerald-300 font-medium">Copied!</span>`;
             lucide.createIcons();
             setTimeout(() => {
                 btn.innerHTML = original;
