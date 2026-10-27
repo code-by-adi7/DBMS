@@ -176,6 +176,6 @@ flowchart TD
 
 ## Creator
 
-- **Adi**
+- **Adithya**
 - **Instagram**: [@adi_cazz__7](https://instagram.com/adi_cazz__7)
 - **GitHub**: [code-by-adi7](https://github.com/code-by-adi7)
